@@ -41,34 +41,37 @@ import edu.ncsu.csc.iTrust2.utils.LoggerUtil;
 public class APIUserController extends APIController {
 
     /** constant for admin role */
-    private static final String       ROLE_ADMIN      = "ROLE_ADMIN";
+    private static final String       ROLE_ADMIN         = "ROLE_ADMIN";
+
+    /** constant for ROLE_BILLING_STAFF role */
+    private static final String       ROLE_BILLING_STAFF = "ROLE_BILLING_STAFF";
 
     /** constant for patient role */
-    private static final String       ROLE_PATIENT    = "ROLE_PATIENT";
+    private static final String       ROLE_PATIENT       = "ROLE_PATIENT";
 
     /** constant for hcp role */
-    private static final String       ROLE_HCP        = "ROLE_HCP";
+    private static final String       ROLE_HCP           = "ROLE_HCP";
 
     /** constant for ER role */
-    private static final String       ROLE_ER         = "ROLE_ER";
+    private static final String       ROLE_ER            = "ROLE_ER";
 
     /** constant for lab role */
-    private static final String       ROLE_LABTECH    = "ROLE_LABTECH";
+    private static final String       ROLE_LABTECH       = "ROLE_LABTECH";
 
     /** constant for virologist role */
-    private static final String       ROLE_VIROLOGIST = "ROLE_VIROLOGIST";
+    private static final String       ROLE_VIROLOGIST    = "ROLE_VIROLOGIST";
 
     /** constant for lab role */
-    private static final String       ROLE_OD         = "ROLE_OD";
+    private static final String       ROLE_OD            = "ROLE_OD";
 
     /** constant for lab role */
-    private static final String       ROLE_OPH        = "ROLE_OPH";
+    private static final String       ROLE_OPH           = "ROLE_OPH";
 
     /** Constant for vaccinator role */
-    private static final String       ROLE_VACCINATOR = "ROLE_VACCINATOR";
+    private static final String       ROLE_VACCINATOR    = "ROLE_VACCINATOR";
 
     /** All roles */
-    private static final List<String> ALL_ROLES       = List.of( ROLE_ADMIN, ROLE_PATIENT, ROLE_HCP, ROLE_ER,
+    private static final List<String> ALL_ROLES          = List.of( ROLE_ADMIN, ROLE_PATIENT, ROLE_HCP, ROLE_ER,
             ROLE_LABTECH, ROLE_VIROLOGIST, ROLE_OD, ROLE_OPH, ROLE_VACCINATOR );
 
     /** LoggerUtil */
@@ -249,6 +252,10 @@ public class APIUserController extends APIController {
         userService.save( admin );
 
         userService.save( doc );
+
+        // ADDING BILLING STAFF MEMBER
+        final User paisaNikal = new Personnel( new UserForm( "billing", "123456", Role.ROLE_BILLING_STAFF, 1 ) );
+        userService.save( paisaNikal );
 
         final User multiRoleDoc = new Personnel( new UserForm( "er", "123456", Role.ROLE_HCP, 1 ) );
         multiRoleDoc.addRole( Role.ROLE_ER );
