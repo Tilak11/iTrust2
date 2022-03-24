@@ -258,4 +258,13 @@ public class User extends DomainObject {
         return roles.contains( Role.ROLE_HCP );
     }
 
+    /**
+     * Checks if a user is a Billing Staff Member.
+     *
+     * @return true if the user has the `ROLE_BILLING_STAFF` role
+     */
+    public boolean isBillingStaff () {
+        return roles.contains( Role.ROLE_BILLING_STAFF );
+    }
+
 }
