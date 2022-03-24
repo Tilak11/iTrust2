@@ -14,6 +14,12 @@ public enum Role {
      * Patient
      */
     ROLE_PATIENT ( 1, "patient/index" ),
+
+    /**
+     * Billing staff
+     */
+    ROLE_BILLING_STAFF ( 1, "billingstaff/index" ),
+
     /**
      * HCP (general)
      */
