@@ -125,6 +125,21 @@ public class APIUserTest {
     }
 
     /**
+     * Tests creating users
+     *
+     * @throws Exception
+     */
+    @Test
+    @Transactional
+    public void testGenerateUsers () throws Exception {
+
+        mvc.perform( MockMvcRequestBuilders.post( "/api/v1/generateUsers" ).contentType( MediaType.APPLICATION_JSON ) )
+                .andExpect( MockMvcResultMatchers.status().isOk() );
+
+        Assert.assertEquals( "There should be six users in the system after creating a User", 6, service.count() );
+    }
+
+    /**
      * Tests creating invalid users
      *
      * @throws Exception
