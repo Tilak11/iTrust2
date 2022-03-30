@@ -72,7 +72,7 @@ public class APIUserController extends APIController {
 
     /** All roles */
     private static final List<String> ALL_ROLES          = List.of( ROLE_ADMIN, ROLE_PATIENT, ROLE_HCP, ROLE_ER,
-            ROLE_LABTECH, ROLE_VIROLOGIST, ROLE_OD, ROLE_OPH, ROLE_VACCINATOR );
+            ROLE_LABTECH, ROLE_VIROLOGIST, ROLE_OD, ROLE_OPH, ROLE_VACCINATOR, ROLE_BILLING_STAFF );
 
     /** LoggerUtil */
     @Autowired

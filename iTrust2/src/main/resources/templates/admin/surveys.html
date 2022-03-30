@@ -2,7 +2,7 @@
 <head th:include="layout :: head(title=~{::title},links=~{::script})">
 <title>Provider Surveys</title>
 <script th:src="@{/js/jk-rating-stars.js}"
-			src="../../../js/jk-rating-stars.js"></script>
+	src="../../../js/jk-rating-stars.js"></script>
 </head>
 <body th:include="layout :: body" th:with="content=~{::content}">
 	<div th:fragment="content">
@@ -79,107 +79,115 @@
 										<tr name="hospitalTableRow"
 											ng-repeat="p in statistics | orderBy: 'name'"
 											userId={{p.hcp.username}}>
-											<td name="selectCell"><input type="radio" name="selectRow" ng-model="$parent.selectedProvider" ng-value="p"></td>
+											<td name="selectCell"><input type="radio"
+												name="selectRow" ng-model="$parent.selectedProvider"
+												ng-value="p"></td>
 											<td name="providerCell">{{p.hcp.username}}</td>
-											<td name="averageWaitTimeCell">{{p.averageWaitingRoomTime | humanize}}</td>
-											<td name="averageSatisfactionCell">
-												<jk-rating-stars rating="(p.averageVisitSatisfaction + p.averageTreatmentSatisfaction) / 2" read-only="true"></jk-rating-stars>
-											</td>
+											<td name="averageWaitTimeCell">{{p.averageWaitingRoomTime
+												| humanize}}</td>
+											<td name="averageSatisfactionCell"><jk-rating-stars
+													rating="(p.averageVisitSatisfaction + p.averageTreatmentSatisfaction) / 2"
+													read-only="true"></jk-rating-stars></td>
 											<td name="surveysFilledCell">{{p.numberOfSurveys}}</td>
 										</tr>
 									</tbody>
-									
+
 								</table>
 							</div>
-							
+
 							<div class="panel-footer text-right">
 								<button class="btn btn-primary btn-lg" ng-click="showDetails()"
-									name="showSurvey" ng-disabled="selectedProvider == undefined">View Details</button>
+									name="showSurvey" ng-disabled="selectedProvider == undefined">View
+									Details</button>
 							</div>
-							
+
 						</div>
-						
-						
+
+
 						<!-- Display the information about the selected visit -->
 						<div class='panel panel-default' ng-show="displayDetails">
-							
+
 							<div class="panel-heading">
-								<h3>Satisfaction Surveys - {{selectedProvider.hcp.username}}</h3>
+								<h3>Satisfaction Surveys -
+									{{selectedProvider.hcp.username}}</h3>
 							</div>
-							
+
 							<div class='panel-body'>
 								<div class="row">
+									<div class="form-group col-md-2">Visit Satisfaction:</div>
+
 									<div class="form-group col-md-2">
-										Visit Satisfaction:
-									</div>
-		
-									<div class="form-group col-md-2">
-										<jk-rating-stars rating="selectedProvider.averageVisitSatisfaction" read-only="true"></jk-rating-stars>
-										<input type="text" style="opacity: 0" id="averageVisitSatisfaction" name="averageVisitSatisfaction" ng-model="selectedProvider.averageVisitSatisfaction"/>
+										<jk-rating-stars
+											rating="selectedProvider.averageVisitSatisfaction"
+											read-only="true"></jk-rating-stars>
+										<input type="text" style="opacity: 0"
+											id="averageVisitSatisfaction" name="averageVisitSatisfaction"
+											ng-model="selectedProvider.averageVisitSatisfaction" />
 
 									</div>
 								</div>
-								
+
 								<div class="row">
-									<div class="form-group col-md-2">
-										Treatment Satisfaction:
+									<div class="form-group col-md-2">Treatment Satisfaction:
 									</div>
-		
+
 									<div class="form-group col-md-2">
-										<jk-rating-stars rating="selectedProvider.averageTreatmentSatisfaction" read-only="true"></jk-rating-stars>
-										<input type="text" style="opacity: 0" id="averageTreatmentSatisfaction" name="averageTreatmentSatisfaction" ng-model="selectedProvider.averageTreatmentSatisfaction"/>
+										<jk-rating-stars
+											rating="selectedProvider.averageTreatmentSatisfaction"
+											read-only="true"></jk-rating-stars>
+										<input type="text" style="opacity: 0"
+											id="averageTreatmentSatisfaction"
+											name="averageTreatmentSatisfaction"
+											ng-model="selectedProvider.averageTreatmentSatisfaction" />
 									</div>
 								</div>
-								
+
 								<div class="row">
+									<div class="form-group col-md-2">Average Waiting Room
+										Time:</div>
+
 									<div class="form-group col-md-2">
-										Average Waiting Room Time:
-									</div>
-		
+										{{selectedProvider.averageWaitingRoomTime | humanize}}</div>
+								</div>
+
+								<div class="row">
+									<div class="form-group col-md-2">Average Time to
+										Examination:</div>
+
 									<div class="form-group col-md-2">
-										 {{selectedProvider.averageWaitingRoomTime | humanize}}
+										{{selectedProvider.averageExaminationResponseTime | humanize}}
 									</div>
 								</div>
-								
-								<div class="row">
-									<div class="form-group col-md-2">
-										Average Time to Examination:
-									</div>
-		
-									<div class="form-group col-md-2">
-										 {{selectedProvider.averageExaminationResponseTime | humanize}}
-									</div>
-								</div>
-								
+
 								<div class="col-md-6">
 									<div class='panel panel-info' ng-show="displayDetails">
-									
+
 										<div class="panel-heading">
 											<h3>Log History</h3>
 										</div>
-										
+
 										<div class='panel-body'>
-											
-											
+
+
 											<div class='row form-group' name="logHistoryTable"
 												ng-repeat="note in selectedProvider.notes"
 												ng-show="selectedProvider.notes.length != 0">
 												<div class='col-md-4' name="averageSatisfactionCell">
-													<jk-rating-stars rating="note.averageSatisfaction" read-only="true"></jk-rating-stars>
+													<jk-rating-stars rating="note.averageSatisfaction"
+														read-only="true"></jk-rating-stars>
 												</div>
 												<div class='col-md-8' name="commentsCell">{{note.comments}}</div>
 											</div>
-											
+
 											<div class='row' ng-show="selectedProvider.notes.length == 0">
-											
-												<div class="form-group col-md-12">
-													No notes for this provider.
-												</div>
-											
+
+												<div class="form-group col-md-12">No notes for this
+													provider.</div>
+
 											</div>
-											
+
 										</div>
-									
+
 									</div>
 								</div>
 							</div>
@@ -190,4 +198,4 @@
 		</div>
 	</div>
 </body>
-</html>	
+</html>
