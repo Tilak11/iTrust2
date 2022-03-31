@@ -38,6 +38,8 @@ public class UserTest {
 
     private static final String USER_3 = "testUser3";
 
+    private static final String USER_4 = "testUser4";
+
     private static final String PW     = "123456";
 
     /**
@@ -87,6 +89,22 @@ public class UserTest {
         user3.addRole( Role.ROLE_HCP );
 
         Assert.assertTrue( "A user with multiple roles should identify as a Doctor properly", user3.isDoctor() );
+
+        final User user4 = new Personnel( new UserForm( USER_4, PW, Role.ROLE_BILLING_STAFF, 1 ) );
+        service.save( user4 );
+
+        Assert.assertEquals( "Creating multiple users should save them as expected", 4, service.count() );
+
+        Assert.assertFalse( "A Billing Staff Member should not be a Doctor by default", user4.isDoctor() );
+
+        Assert.assertTrue( "The user4 is a billing staff member", user4.isBillingStaff() );
+
+        user4.addRole( Role.ROLE_VACCINATOR );
+
+        service.save( user4 );
+
+        Assert.assertEquals( "Giving a user a second role should still result in just a single user", 4,
+                service.count() );
 
     }
 

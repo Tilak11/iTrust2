@@ -25,6 +25,9 @@
 					}
 	 				if( $scope.user.password.length < 6)
 	 					err.push("Password must be more than 6 characters long");
+	 				if($scope.user.roles.indexOf("ROLE_BILLING_STAFF") !=-1 &&  $scope.user.roles.length > 1 ) {
+	 					err.push("Billing staff only have access to billing functionality");
+					}
 					return err.join(".  ");
 				}
 				
@@ -47,11 +50,13 @@
 	        	
 				for (let [key, value] of Object.entries($scope.user.roles)) {
 					console.log($scope.user.roles);
+					console.log("key ", key);
+					console.log("val ", value);
 					  if(value === true) roles.push(key);
 				}
 				
 				$scope.user.roles = roles;
-	        	
+				
 		          var err = checkValidUserForm($scope.user);
 		          if (err) {
 		            $scope.errorAdding = err;
@@ -112,6 +117,7 @@
 	        	    "ROLE_VIROLOGIST", 
 	        	    "ROLE_LABTECH" ,
 	        	    "ROLE_VACCINATOR",
+	        	    "ROLE_BILLING_STAFF"
 	        ];
         	
         	$scope.selectHCP = function(role) {
@@ -227,8 +233,9 @@ input[type=password] {
 													<br> <br> <b>Role:</b>
 
 													<div ng-repeat="role in roles track by $index">
-														<input type="checkbox" id="{{role}}" ng-model="$parent.user.roles[role]" ng-change="selectHCP(role)" ><i>
-															{{role}}</i></input>
+														<input type="checkbox" id="{{role}}"
+															ng-model="$parent.user.roles[role]"
+															ng-change="selectHCP(role)"><i> {{role}}</i></input>
 													</div>
 
 													<br> <br> <b>Enabled?:</b> <input type="checkbox"

@@ -43,6 +43,8 @@ public class APIUserTest {
 
     private static final String   USER_3 = "API_USER_3";
 
+    private static final String   USER_4 = "API_USER_4";
+
     private static final String   PW     = "123456";
 
     /**
@@ -113,6 +115,28 @@ public class APIUserTest {
 
         Assert.assertEquals( "The retrieved user should have 1 role", 1, vaccinator.getRoles().size() );
 
+        final UserForm u4 = new UserForm( USER_4, PW, Role.ROLE_BILLING_STAFF, 1 );
+
+        mvc.perform( MockMvcRequestBuilders.post( "/api/v1/users" ).contentType( MediaType.APPLICATION_JSON )
+                .content( TestUtils.asJsonString( u4 ) ) ).andExpect( MockMvcResultMatchers.status().isOk() );
+
+        Assert.assertEquals( "There should be four users in the system after creating a User", 4, service.count() );
+
+    }
+
+    /**
+     * Tests creating users
+     *
+     * @throws Exception
+     */
+    @Test
+    @Transactional
+    public void testGenerateUsers () throws Exception {
+
+        mvc.perform( MockMvcRequestBuilders.post( "/api/v1/generateUsers" ).contentType( MediaType.APPLICATION_JSON ) )
+                .andExpect( MockMvcResultMatchers.status().isOk() );
+
+        Assert.assertEquals( "There should be six users in the system after creating a User", 6, service.count() );
     }
 
     /**
@@ -140,6 +164,16 @@ public class APIUserTest {
 
         mvc.perform( MockMvcRequestBuilders.post( "/api/v1/users" ).contentType( MediaType.APPLICATION_JSON )
                 .content( TestUtils.asJsonString( u2 ) ) )
+                .andExpect( MockMvcResultMatchers.status().is4xxClientError() );
+
+        Assert.assertEquals( "Trying to create an invalid user should not create any User record", 0, service.count() );
+
+        final UserForm u3 = new UserForm( USER_3, PW, Role.ROLE_BILLING_STAFF, 1 );
+
+        u3.addRole( Role.ROLE_ADMIN.toString() );
+
+        mvc.perform( MockMvcRequestBuilders.post( "/api/v1/users" ).contentType( MediaType.APPLICATION_JSON )
+                .content( TestUtils.asJsonString( u3 ) ) )
                 .andExpect( MockMvcResultMatchers.status().is4xxClientError() );
 
         Assert.assertEquals( "Trying to create an invalid user should not create any User record", 0, service.count() );
@@ -203,6 +237,28 @@ public class APIUserTest {
 
         mvc.perform(
                 MockMvcRequestBuilders.delete( "/api/v1/users/" + USER_1 ).contentType( MediaType.APPLICATION_JSON ) )
+                .andExpect( MockMvcResultMatchers.status().isOk() );
+
+        Assert.assertEquals( "Deleting a user should really delete them", 0, service.count() );
+
+        final UserForm uf2 = new UserForm( USER_2, PW, Role.ROLE_BILLING_STAFF, 1 );
+
+        final User u2 = new Personnel( uf2 );
+
+        service.save( u2 );
+
+        mvc.perform( MockMvcRequestBuilders.get( "/api/v1/users/Lodewijk" ).contentType( MediaType.APPLICATION_JSON ) )
+                .andExpect( MockMvcResultMatchers.status().isNotFound() );
+
+        mvc.perform( MockMvcRequestBuilders.get( "/api/v1/users/" + USER_2 ).contentType( MediaType.APPLICATION_JSON ) )
+                .andExpect( MockMvcResultMatchers.status().isOk() );
+
+        mvc.perform(
+                MockMvcRequestBuilders.delete( "/api/v1/users/Lodewijk" ).contentType( MediaType.APPLICATION_JSON ) )
+                .andExpect( MockMvcResultMatchers.status().isNotFound() );
+
+        mvc.perform(
+                MockMvcRequestBuilders.delete( "/api/v1/users/" + USER_2 ).contentType( MediaType.APPLICATION_JSON ) )
                 .andExpect( MockMvcResultMatchers.status().isOk() );
 
         Assert.assertEquals( "Deleting a user should really delete them", 0, service.count() );

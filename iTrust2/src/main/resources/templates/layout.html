@@ -102,6 +102,7 @@ a {
 			$http.get("/iTrust2/api/v1/role").then(
 				function (response) {
 					var role = response.data.message; //contains user role
+					console.log(role);
 					var navbarparent = document.getElementById('navbar-parent');
 					var admindropdown = document.getElementById('admin-dropdown');
 					var patientdropdown = document.getElementById('patient-dropdown');
@@ -110,6 +111,7 @@ a {
 					var ltdropdown = document.getElementById('labtech-dropdown');
 					var virologistdropdown = document.getElementById('virologist-dropdown');
 					var vaccinator = document.getElementById('vaccinator-dropdown');
+					var billing = document.getElementById('billingstaff-dropdown');
 					if (patientdropdown && !role.includes('PATIENT')) {
 						navbarparent.removeChild(patientdropdown);
 					}
@@ -130,6 +132,9 @@ a {
 					}
 					if (vaccinator && !role.includes('VACCINATOR')) {
 						navbarparent.removeChild(vaccinator);
+					}
+					if (billing && !role.includes('BILLING_STAFF')) {
+						navbarparent.removeChild(billing);
 					}
 
 				});
@@ -165,6 +170,24 @@ a {
 								id="manageICDCodes">Manage ICD-10 Codes</a></li>
 							<li><a href="/iTrust2/admin/surveys"
 								id="surveys">Satisfaction Surveys</a></li> 
+						</ul></li>
+					<li class="dropdown"><a class="dropdown-toggle"
+						data-toggle="dropdown" href="#">Edit<span class="caret"></span></a>
+						<ul class="dropdown-menu">
+							<li><a href="/iTrust2/personnel/editDemographics"
+								id="editdemographics-personnel">Edit Demographics</a></li>
+						</ul></li>
+				</ul>
+				<!-- Billing Staff navbar -->
+				<ul id="billingstaff-dropdown" class="nav navbar-nav">
+					<li class="dropdown"><a class="dropdown-toggle"
+						data-toggle="dropdown" href="#">Billing Staff<span class="caret"></span></a>
+						<ul class="dropdown-menu">
+							<li><a href="/iTrust2/billingstaff/viewbills" id="view">View
+									Bill</a></li>
+							<li><a href="/iTrust2/billingstaff/paybills" id="pay">Pay
+									Bill</a></li>
+							<li><a href="/iTrust2/billingstaff/maintainCPTCodes" id="maintain">Maintain CPT Codes</a></li>
 						</ul></li>
 					<li class="dropdown"><a class="dropdown-toggle"
 						data-toggle="dropdown" href="#">Edit<span class="caret"></span></a>
