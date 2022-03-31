@@ -8,6 +8,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import edu.ncsu.csc.iTrust2.forms.CPTCodeForm;
+
 /**
  * Class for CPT codes. These codes themselves are stored as a String, along
  * with a description and an ID.
@@ -23,26 +25,26 @@ public class CPTCode extends DomainObject {
      */
     @Id
     @GeneratedValue ( strategy = GenerationType.AUTO )
-    private Long    id;
+    private Long   id;
 
     /**
      * The CPT Code string
      */
-    private String  code;
+    private String code;
     /**
      * Description of the diagnosis
      */
-    private String  description;
+    private String description;
 
     /**
      * Time Range of the CPT Code
      */
-    private String  timeRange;
+    private String timeFrame;
 
     /**
      * Cost of the CPT code
      */
-    private Integer cost;
+    private Double cost;
 
     /**
      * Empty constructor for Hibernate
@@ -62,7 +64,7 @@ public class CPTCode extends DomainObject {
         setDescription( form.getDescription() );
         setId( form.getId() );
         setCost( form.getCost() );
-        setTimeRange( form.getTimeFrame() );
+        setTimeFrame( form.getTimeFrame() );
 
     }
 
@@ -83,7 +85,7 @@ public class CPTCode extends DomainObject {
      *            for the code
      *
      */
-    public void setTimeRange ( final String timeFrame ) {
+    public void setTimeFrame ( final String timeFrame ) {
         // scans the time string to check if the starting t1 > t2 or if its
         // negative. Should be in format (int-int minutes)
         final Scanner s = new Scanner( timeFrame );
@@ -103,7 +105,16 @@ public class CPTCode extends DomainObject {
             throw new IllegalArgumentException( "Time range must contain integer for time" );
         }
         s.close();
-        this.timeRange = timeFrame;
+        this.timeFrame = timeFrame;
+    }
+
+    /**
+     * Return the time frame of the CPT code
+     *
+     * @return time frame as String for CPT code
+     */
+    public String getTimeFrame () {
+        return this.timeFrame;
     }
 
     /**
@@ -164,7 +175,7 @@ public class CPTCode extends DomainObject {
      *
      * @return the isOphthalmology
      */
-    public Integer getCost () {
+    public Double getCost () {
         return this.cost;
     }
 
@@ -174,7 +185,7 @@ public class CPTCode extends DomainObject {
      * @param isOphthalmology
      *            the isOphthalmology to set
      */
-    public void setCost ( final Integer cost ) {
+    public void setCost ( final Double cost ) {
         if ( cost < 0 ) {
             throw new IllegalArgumentException( "CPT Code Cost cannot be negative" );
         }
