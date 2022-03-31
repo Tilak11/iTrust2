@@ -1,6 +1,7 @@
 package edu.ncsu.csc.iTrust2.controllers.routing;
 
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -12,6 +13,7 @@ import edu.ncsu.csc.iTrust2.models.enums.Role;
  * @author rdudhat
  *
  */
+@Controller
 public class BillingStaffController {
 
     /**

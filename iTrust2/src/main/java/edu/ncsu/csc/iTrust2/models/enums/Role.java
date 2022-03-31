@@ -18,7 +18,7 @@ public enum Role {
     /**
      * Billing staff
      */
-    ROLE_BILLING_STAFF ( 1, "billingstaff/index" ),
+     ROLE_BILLING_STAFF ( 1, "billingstaff/index" ),
 
     /**
      * HCP (general)
