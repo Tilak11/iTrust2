@@ -91,18 +91,22 @@ public class CPTCode extends DomainObject {
         final Scanner s = new Scanner( timeFrame );
         final String time = s.next();
         final String timeArr[] = time.split( "-", 2 );
+        final String timeUnit = s.next();
+        final int t1;
+        final int t2;
         try {
-            final int t1 = Integer.parseInt( timeArr[0] );
-            final int t2 = Integer.parseInt( timeArr[1] );
-            if ( ( t1 > t2 ) || t1 <= 0 || t2 <= 0 ) {
-                s.close();
-                throw new IllegalArgumentException( "Time format should be in format (int-int minutes)" );
-            }
+            t1 = Integer.parseInt( timeArr[0] );
+            t2 = Integer.parseInt( timeArr[1] );
 
         }
         catch ( final Exception e ) {
             s.close();
             throw new IllegalArgumentException( "Time range must contain integer for time" );
+        }
+        if ( t1 > t2 || t1 <= 0 || t2 <= 0 || ( !timeUnit.equals( "hours" ) && !timeUnit.equals( "minutes" ) ) ) {
+            s.close();
+            throw new IllegalArgumentException(
+                    "Time format should be in format [int-int minutes] OR [int-int hours]" );
         }
         s.close();
         this.timeFrame = timeFrame;
@@ -136,11 +140,11 @@ public class CPTCode extends DomainObject {
         // code XYY where X is a capital alphabetic letter and Y is a number
         // from 0-9. Code can also contain up to three decimal places
         final char[] c = code.toCharArray();
-        if ( c.length < 5 ) {
+        if ( c.length != 5 ) {
             throw new IllegalArgumentException( "Code must be at least five characters and all integers: " + code );
         }
         for ( int i = 0; i < c.length; i++ ) {
-            if ( Character.isLetter( c[i] ) ) {
+            if ( !Character.isDigit( c[i] ) ) {
                 throw new IllegalArgumentException( "Code must contain all integers and must be of length 5: " + code );
             }
         }
@@ -165,7 +169,7 @@ public class CPTCode extends DomainObject {
     public void setDescription ( final String d ) {
         // validate
         if ( d.length() > 250 ) {
-            throw new IllegalArgumentException( "Description too long (250 characters max): " + description );
+            throw new IllegalArgumentException( "Description too long (250 characters max)" );
         }
         description = d;
     }

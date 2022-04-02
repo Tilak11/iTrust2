@@ -64,18 +64,22 @@ public class CPTCodeForm {
         final Scanner s = new Scanner( timeFrame );
         final String time = s.next();
         final String timeArr[] = time.split( "-", 2 );
+        final String timeUnit = s.next();
+        final int t1;
+        final int t2;
         try {
-            final int t1 = Integer.parseInt( timeArr[0] );
-            final int t2 = Integer.parseInt( timeArr[1] );
-            if ( ( t1 > t2 ) || t1 <= 0 || t2 <= 0 ) {
-                s.close();
-                throw new IllegalArgumentException( "Time format should be in format (int-int minutes)" );
-            }
+            t1 = Integer.parseInt( timeArr[0] );
+            t2 = Integer.parseInt( timeArr[1] );
 
         }
         catch ( final Exception e ) {
             s.close();
             throw new IllegalArgumentException( "Time range must contain integer for time" );
+        }
+        if ( t1 > t2 || t1 <= 0 || t2 <= 0 || ( !timeUnit.equals( "hours" ) && !timeUnit.equals( "minutes" ) ) ) {
+            s.close();
+            throw new IllegalArgumentException(
+                    "Time format should be in format [int-int minutes] OR [int-int hours]" );
         }
         s.close();
         this.timeFrame = timeFrame;
@@ -97,6 +101,17 @@ public class CPTCodeForm {
      *            The new code
      */
     public void setCode ( final String code ) {
+        // code XYY where X is a capital alphabetic letter and Y is a number
+        // from 0-9. Code can also contain up to three decimal places
+        final char[] c = code.toCharArray();
+        if ( c.length != 5 ) {
+            throw new IllegalArgumentException( "Code must be at least five characters and all integers: " + code );
+        }
+        for ( int i = 0; i < c.length; i++ ) {
+            if ( !Character.isDigit( c[i] ) ) {
+                throw new IllegalArgumentException( "Code must contain all integers and must be of length 5: " + code );
+            }
+        }
         this.code = code;
     }
 
@@ -116,6 +131,10 @@ public class CPTCodeForm {
      *            The new description
      */
     public void setDescription ( final String d ) {
+        // validate
+        if ( d.length() > 250 ) {
+            throw new IllegalArgumentException( "Description too long (250 characters max)" );
+        }
         description = d;
     }
 
@@ -174,10 +193,78 @@ public class CPTCodeForm {
         final int prime = 31;
         int result = 1;
         result = prime * result + ( ( code == null ) ? 0 : code.hashCode() );
+        result = prime * result + ( ( cost == null ) ? 0 : cost.hashCode() );
         result = prime * result + ( ( description == null ) ? 0 : description.hashCode() );
         result = prime * result + ( ( id == null ) ? 0 : id.hashCode() );
-        result = prime * result + ( ( cost == null ) ? 0 : cost.hashCode() );
+        result = prime * result + ( ( timeFrame == null ) ? 0 : timeFrame.hashCode() );
         return result;
     }
+
+    @Override
+    public boolean equals ( final Object obj ) {
+        if ( this == obj ) {
+            return true;
+        }
+        if ( obj == null ) {
+            return false;
+        }
+        if ( getClass() != obj.getClass() ) {
+            return false;
+        }
+        final CPTCodeForm other = (CPTCodeForm) obj;
+        if ( code == null ) {
+            if ( other.code != null ) {
+                return false;
+            }
+        }
+        else if ( !code.equals( other.code ) ) {
+            return false;
+        }
+        if ( cost == null ) {
+            if ( other.cost != null ) {
+                return false;
+            }
+        }
+        else if ( !cost.equals( other.cost ) ) {
+            return false;
+        }
+        if ( description == null ) {
+            if ( other.description != null ) {
+                return false;
+            }
+        }
+        else if ( !description.equals( other.description ) ) {
+            return false;
+        }
+        if ( id == null ) {
+            if ( other.id != null ) {
+                return false;
+            }
+        }
+        else if ( !id.equals( other.id ) ) {
+            return false;
+        }
+        if ( timeFrame == null ) {
+            if ( other.timeFrame != null ) {
+                return false;
+            }
+        }
+        else if ( !timeFrame.equals( other.timeFrame ) ) {
+            return false;
+        }
+        return true;
+    }
+
+    // @Override
+    // public int hashCode () {
+    // final int prime = 31;
+    // int result = 1;
+    // result = prime * result + ( ( code == null ) ? 0 : code.hashCode() );
+    // result = prime * result + ( ( description == null ) ? 0 :
+    // description.hashCode() );
+    // result = prime * result + ( ( id == null ) ? 0 : id.hashCode() );
+    // result = prime * result + ( ( cost == null ) ? 0 : cost.hashCode() );
+    // return result;
+    // }
 
 }
