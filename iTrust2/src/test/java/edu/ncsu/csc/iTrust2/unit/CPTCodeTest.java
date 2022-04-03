@@ -48,9 +48,13 @@ public class CPTCodeTest {
 
         final CPTCode code = new CPTCode( form1 );
         assertEquals( code, base );
+        assertTrue( code.equals( base ) );
+        assertEquals( code.hashCode(), base.hashCode() );
 
         final CPTCodeForm form2 = new CPTCodeForm( base );
         assertEquals( form1, form2 );
+        assertTrue( form1.equals( form2 ) );
+        assertEquals( form1.hashCode(), form2.hashCode() );
 
         assertEquals( "99292", code.getCode() );
         assertTrue( code.getId().equals( 1L ) );
