@@ -29,6 +29,18 @@ public class CPTCodeForm {
      * Time frame for the CPT code
      */
     private String timeFrame;
+    
+    private String deleted;
+
+    
+
+	public String getDeleted() {
+		return deleted;
+	}
+
+	public void setDeleted(String deleted) {
+		this.deleted = deleted;
+	}
 
     /**
      * Empty constructor for GSON
@@ -49,6 +61,7 @@ public class CPTCodeForm {
         setId( code.getId() );
         setCost( code.getCost() );
         setTimeFrame( code.getTimeFrame() );
+        setDeleted(code.getDeleted());
     }
 
     /**

@@ -17,10 +17,8 @@ import edu.ncsu.csc.iTrust2.repositories.CPTCodeRepository;
 import edu.ncsu.csc.iTrust2.utils.LoggerUtil;
 
 /**
- * Service class for interacting with CPTCode model, performing CRUD tasks with
- * database.
- *
- * @author Kai Presler-Marshall
+ * 
+ * @author Tilak Patel
  *
  */
 @Component

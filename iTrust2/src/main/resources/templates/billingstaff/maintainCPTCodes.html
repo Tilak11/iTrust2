@@ -17,7 +17,8 @@
 						code :' ',
 						description: '',
 						timeFrame:'',
-						cost:''
+						cost:'',
+						deleted: ''
 				};
 				$scope.loadTable = function() {
 					// get list of icd codes from rest api
@@ -35,7 +36,7 @@
 				$scope.addCode = function() {
 					console.log("in add");
 
-					for (var i=0; i<$scope.codes.length; i++){
+					/**for (var i=0; i<$scope.codes.length; i++){
 						if($scope.codes[i].code === $scope.code.code){
 							$scope.duplicate = true;
 							$scope.errorAdding = "Code already exists";
@@ -43,7 +44,7 @@
 
 						}
 						
-					}
+					}**/
 					if ($scope.code.description.length > 250) {
 						$scope.errorAdding = "Description exceeds character limit of 250";
 					} //else if (/^[A-Z][0-9][0-9|A-Z](\.[0-9|A-Z]{0,4})?$/.test($scope.code.code) == false) {
@@ -52,6 +53,7 @@
 		
 					else {
 						console.log($scope.code);
+						$scope.code.deleted = "no";
 						$http.post("/iTrust2/api/v1/cptcodes", $scope.code).then(
 								function(response) {
 									$scope.loadTable();
@@ -68,13 +70,23 @@
 				}
 				
 				$scope.removeRow = function(code) {
-					$http.delete('/iTrust2/api/v1/cptcode/' + code.id).then(
+					console.log("ld ",$scope.codes);
+
+					code.deleted = "yes";
+					$http.put('/iTrust2/api/v1/cptcode/' + code.id, code).then(
+					function(response) {
+						$scope.loadTable();
+						$scope.message = "";
+					}, function(rejection) {
+						$scope.message = "Could not delete";
+					})
+				/*	$http.delete('/iTrust2/api/v1/cptcode/' + code.id).then(
 							function(response) {
 								$scope.loadTable();
 								$scope.message = "";
 							}, function(rejection) {
 								$scope.message = "Could not remove ICD-10 code";
-							})
+							})*/
 				}
 				$scope.editRow = function(code){
 						$scope.editClicked = true;
@@ -89,7 +101,7 @@
 					console.log("in up");
 					console.log($scope.code);
 					for (var i=0; i<$scope.codes.length; i++){
-						if($scope.codes[i].code === $scope.code.code && $scope.codes[i].id != $scope.id){
+						if($scope.codes[i].code === $scope.code.code && $scope.codes[i].id != $scope.id && $scope.codes[i].deleted=== 'no'){
 							$scope.duplicate = true;
 							$scope.errorAdding = "Code already exists";
 							return;
@@ -115,6 +127,7 @@
 				
 				// load table upon page loading
 				$scope.loadTable();
+
 			});
 			/*]]>*/
 		</script>
@@ -134,7 +147,7 @@
 								<th>Timeframe</th>
 								<th>Cost</th>
 							</tr>
-							<tr name="codeRow" ng-repeat="c in codes | orderBy: 'code'"
+							<tr name="codeRow" ng-repeat="c in codes | filter: {deleted: 'no'}"
 								codeId={{c.id}}>
 								<td name="codeCell">{{c.code}}</td>
 								<td name="descriptionCell">{{c.description}}</td>
@@ -144,6 +157,23 @@
 									class="btn btn-primary" ng-click="editRow(c)" /></td>
 								<td><input type="button" value="Remove"
 									class="btn btn-primary" ng-click="removeRow(c)" /></td>
+							</tr>
+						</table>
+					<h3> Deleted Codes</h3>
+					<table class="table">
+							<tr>
+								<th>CPT Code</th>
+								<th>Description</th>
+								<th>Timeframe</th>
+								<th>Cost</th>
+							</tr>
+							<tr name="codeRow" ng-repeat="c in codes | filter: {deleted: 'yes'}"
+								codeId={{c.id}}>
+								<td name="codeCell">{{c.code}}</td>
+								<td name="descriptionCell">{{c.description}}</td>
+								<td name="timeCell" >{{c.timeFrame}}</td>
+								<td name="costCell" >${{c.cost}}</td>
+		
 							</tr>
 						</table>
 					</td>
