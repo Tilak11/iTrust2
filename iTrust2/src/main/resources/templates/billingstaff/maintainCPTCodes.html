@@ -1,12 +1,210 @@
-<!DOCTYPE html>
-<html>
-<head>
-<title>Maintain CPT Codes</title>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:include="layout :: head(title=~{::title},links=~{})">
+<title>Manage CPT Codes</title>
 </head>
-<body>
+<body th:include="layout :: body" th:with="content=~{::content}">
+	<div th:fragment="content">
 
-<h1>This is a Heading</h1>
-<p>This is a paragraph.</p>
+		<script th:inline="javascript">
+		/* Otherwise Thymeleaf tries to parse Javascript as XML and breaks itself sometimes.  Sigh */
+		/*<![CDATA[*/
+			var app = angular.module("manageCPTCodesApp", []);
+			app.controller('manageCPTCodesCtrl', function($scope, $http) {
 
+				$scope.duplicate = false;
+				$scope.codes = [];
+				$scope.code = {
+						code :' ',
+						description: '',
+						timeFrame:'',
+						cost:''
+				};
+				$scope.loadTable = function() {
+					// get list of icd codes from rest api
+					$http.get("/iTrust2/api/v1/cptcodes").then(
+							function(response) {
+								$scope.codes = response.data; // or just response?
+								$scope.message = "";
+							}, function(rejection) {
+								$scope.codes = [];
+								$scope.codes = "Could not display ICD-10 Codes";
+							});
+				}
+				
+				// handle add code button click
+				$scope.addCode = function() {
+					console.log("in add");
+
+					for (var i=0; i<$scope.codes.length; i++){
+						if($scope.codes[i].code === $scope.code.code){
+							$scope.duplicate = true;
+							$scope.errorAdding = "Code already exists";
+							return;
+
+						}
+						
+					}
+					if ($scope.code.description.length > 250) {
+						$scope.errorAdding = "Description exceeds character limit of 250";
+					} //else if (/^[A-Z][0-9][0-9|A-Z](\.[0-9|A-Z]{0,4})?$/.test($scope.code.code) == false) {
+						//$scope.errorAdding = "Code doesn't meet specifications";
+					//} 
+		
+					else {
+						console.log($scope.code);
+						$http.post("/iTrust2/api/v1/cptcodes", $scope.code).then(
+								function(response) {
+									$scope.loadTable();
+									$scope.code.code = "";
+									$scope.code.description = "";
+									$scope.code.timeFrame = "";
+									$scope.code.cost = "";
+									$scope.errorAdding = "";
+								}, function(rejection) {
+									$scope.errorAdding = "Could not add code";
+								})
+					}
+					
+				}
+				
+				$scope.removeRow = function(code) {
+					$http.delete('/iTrust2/api/v1/cptcode/' + code.id).then(
+							function(response) {
+								$scope.loadTable();
+								$scope.message = "";
+							}, function(rejection) {
+								$scope.message = "Could not remove ICD-10 code";
+							})
+				}
+				$scope.editRow = function(code){
+						$scope.editClicked = true;
+						$scope.id = code.id;
+						$scope.code.code = code.code;					
+						$scope.code.description = code.description;					
+						$scope.code.timeFrame = code.timeFrame;					
+						$scope.code.cost = code.cost;					
+				}
+				
+				$scope.updateRow = function(){
+					console.log("in up");
+					console.log($scope.code);
+					for (var i=0; i<$scope.codes.length; i++){
+						if($scope.codes[i].code === $scope.code.code && $scope.codes[i].id != $scope.id){
+							$scope.duplicate = true;
+							$scope.errorAdding = "Code already exists";
+							return;
+
+						}
+						
+					}
+
+					$http.put("/iTrust2/api/v1/cptcode/"+$scope.id, $scope.code).then(
+							function(response) {
+								$scope.loadTable();
+								$scope.code.code = "";
+								$scope.code.description = "";
+								$scope.errorAdding = "";
+								$scope.code.timeFrame = "";
+								$scope.code.cost = "";
+								$scope.editClicked = false;
+							}, function(rejection) {
+								$scope.errorAdding = "Could not add code";
+							})
+
+				}
+				
+				// load table upon page loading
+				$scope.loadTable();
+			});
+			/*]]>*/
+		</script>
+
+		<div ng-app="manageCPTCodesApp" ng-controller="manageCPTCodesCtrl">
+			<!-- Info on tables from https://hello-angularjs.appspot.com/removetablerow -->
+			<h4 style="color: red" ng-model="message"></h4>
+
+			<h1>Manage CPT Codes</h1>
+			<table style="width: 100%">
+				<tr>
+					<td style="vertical-align: top">
+						<table class="table">
+							<tr>
+								<th>CPT Code</th>
+								<th>Description</th>
+								<th>Timeframe</th>
+								<th>Cost</th>
+							</tr>
+							<tr name="codeRow" ng-repeat="c in codes | orderBy: 'code'"
+								codeId={{c.id}}>
+								<td name="codeCell">{{c.code}}</td>
+								<td name="descriptionCell">{{c.description}}</td>
+								<td name="timeCell" >{{c.timeFrame}}</td>
+								<td name="costCell" >${{c.cost}}</td>
+								<td><input type="button" value="Edit"
+									class="btn btn-primary" ng-click="editRow(c)" /></td>
+								<td><input type="button" value="Remove"
+									class="btn btn-primary" ng-click="removeRow(c)" /></td>
+							</tr>
+						</table>
+					</td>
+					<td style="width: 35%; vertical-align: top">
+						<div style="padding: 0px 0px 20px 30px">
+							<h3  ng-show ="!editClicked"  >Add CPT Code</h3>
+							<h3  ng-show ="editClicked"  >Edit CPT Code</h3>
+						</div>
+						<form class="form-horizontal" role="form" name="addCodeForm"
+							ng-submit="addCode(addCodeForm.$valid)">
+							<div class="form-group" style="padding-left: 30px">
+								<label>CPT Code</label> <input type="text"
+									class="form-control" name="code" ng-model="code.code" required />
+							</div>
+							<div class="form-group" style="padding-left: 30px">
+								<label>Description</label>
+								<textarea class="form-control" rows="5" name="description"
+									ng-model="code.description" required ng-minlength="1"></textarea>
+							</div>
+							<div class="form-group" style="padding-left: 30px">
+								<label>Time Frame</label>
+								<textarea class="form-control" rows="5" name="timeFrame"
+									ng-model="code.timeFrame" required ng-minlength="1"></textarea>
+							</div>
+							<div class="form-group" style="padding-left: 30px">
+								<label>Cost</label>
+								<textarea class="form-control" rows="5" name="cost"
+									ng-model="code.cost" required ng-minlength="1"></textarea>
+							</div>
+							
+							<div class="form-group" style="padding-left: 30px">
+								<div style="padding-left: 170px">
+									<button ng-show ="!editClicked"class="btn btn-primary" name="submit">Add Code</button>
+								
+									<!-- <input type="submit" value="Add Code" class="btn btn-primary"/>  -->
+								</div>
+								
+							</div>
+						</form>
+							<div style="padding-left: 170px">
+									<button ng-click="updateRow()" ng-show ="editClicked"class="btn btn-primary">Update Code</button>
+								
+									<!-- <input type="submit" value="Add Code" class="btn btn-primary"/>  -->
+								</div>
+						<div>
+							<!-- <h4 style="color: red" ng-show="addCodeForm.$valid">Code doesn't meet specifications</h4>  -->
+							<p style="color: red" ng-model="errorAdding" id="errP">{{errorAdding}}</p>
+						</div>
+						<div>
+							<!-- Formate guidelines from https://www.cms.gov/Medicare/Coding/ICD10/downloads/ICD-10Overview.pdf -->
+							<h4 style="color: blue">CPT Code Format:</h4>
+							<ul>
+								<li>CPT Code should be 5 digits long</li>
+								<li>Time Frame format should be [X-Y minutes] or [X-Y hours] where X and Y are numbers</li> 
+	
+							</ul>
+						</div>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</div>
 </body>
 </html>

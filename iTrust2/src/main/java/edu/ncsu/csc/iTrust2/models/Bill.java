@@ -12,6 +12,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
@@ -62,6 +63,7 @@ public class Bill extends DomainObject {
     private String        attendingHCP;
 
     /** List of CPT codes associated with the visit */
+    @OneToMany
     private List<CPTCode> CPTCodes;
 
     /** For Hibernate/Thymeleaf _must_ be an empty constructor */
