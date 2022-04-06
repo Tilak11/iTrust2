@@ -45,8 +45,23 @@ public class CPTCode extends DomainObject {
      * Cost of the CPT code
      */
     private Double cost;
-
+    
     /**
+     * Cost of the CPT code
+     */
+    private String status;
+
+  
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	/**
      * Empty constructor for Hibernate
      */
     public CPTCode () {
@@ -65,6 +80,8 @@ public class CPTCode extends DomainObject {
         setId( form.getId() );
         setCost( form.getCost() );
         setTimeFrame( form.getTimeFrame() );
+        setStatus(form.getStatus());
+        
 
     }
 

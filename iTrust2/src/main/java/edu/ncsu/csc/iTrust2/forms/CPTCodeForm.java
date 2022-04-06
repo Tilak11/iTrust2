@@ -29,6 +29,18 @@ public class CPTCodeForm {
      * Time frame for the CPT code
      */
     private String timeFrame;
+    
+    private String status;
+
+    
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
 
     /**
      * Empty constructor for GSON
@@ -49,6 +61,7 @@ public class CPTCodeForm {
         setId( code.getId() );
         setCost( code.getCost() );
         setTimeFrame( code.getTimeFrame() );
+        setStatus(code.getStatus());
     }
 
     /**
