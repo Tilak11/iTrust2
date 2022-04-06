@@ -19,14 +19,14 @@
 						description: '',
 						timeFrame:'',
 						cost:'',
-						deleted: 'no'
+						status: 'active'
 				};
 				$scope.editedCode = {
 						code :' ',
 						description: '',
 						timeFrame:'',
 						cost:'',
-						deleted: ''
+						status: ''
 				};
 				$scope.loadTable = function() {
 					// get list of icd codes from rest api
@@ -45,7 +45,7 @@
 					console.log("in add");
 
 					for (var i=0; i<$scope.codes.length; i++){
-						if($scope.codes[i].code === $scope.code.code && $scope.codes[i].deleted=== 'no'){
+						if($scope.codes[i].code === $scope.code.code && $scope.codes[i].status=== 'active'){
 							$scope.duplicate = true;
 							$scope.errorAdding = "Code already exists";
 							return;
@@ -61,7 +61,7 @@
 		
 					else {
 						console.log($scope.code);
-						$scope.code.deleted = "no";
+						$scope.code.status = "active";
 						$http.post("/iTrust2/api/v1/cptcodes", $scope.code).then(
 								function(response) {
 									$scope.loadTable();
@@ -80,7 +80,7 @@
 				$scope.removeRow = function(code) {
 					console.log("ld ",$scope.codes);
 
-					code.deleted = "yes";
+					code.status = "deleted";
 					$http.put('/iTrust2/api/v1/cptcode/' + code.id, code).then(
 					function(response) {
 						$scope.loadTable();
@@ -114,7 +114,7 @@
 					console.log("in up");
 					console.log($scope.code);
 					for (var i=0; i<$scope.codes.length; i++){
-						if($scope.codes[i].code === $scope.code.code && $scope.codes[i].id != $scope.id && $scope.codes[i].deleted != 'yes' &&  $scope.codes[i].deleted != 'edited'){
+						if($scope.codes[i].code === $scope.code.code && $scope.codes[i].id != $scope.id && $scope.codes[i].status != 'deleted' &&  $scope.codes[i].status != 'edited'){
 							$scope.duplicate = true;
 							$scope.errorAdding = "Code already exists";
 							return;
@@ -136,7 +136,7 @@
 							}, function(rejection) {
 								$scope.errorAdding = "Could not add code";
 							})
-					$scope.editedCode.deleted = "edited";
+					$scope.editedCode.status = "edited";
 					$http.post("/iTrust2/api/v1/cptcodes", $scope.editedCode).then(
 								function(response) {
 									$scope.loadTable();
@@ -144,7 +144,7 @@
 									$scope.editedCode.description = "";
 									$scope.editedCode.timeFrame = "";
 									$scope.editedCode.cost = "";
-									$scope.editedCode.deleted = "edited";
+									$scope.editedCode.status = "edited";
 									$scope.errorAdding = "";
 								}, function(rejection) {
 									$scope.errorAdding = "Could not add code";
@@ -180,7 +180,7 @@
 								<th>Timeframe</th>
 								<th>Cost</th>
 							</tr>
-							<tr name="codeRow" ng-repeat="c in codes | filter: {deleted:'no'}"
+							<tr name="codeRow" ng-repeat="c in codes | filter: {status:'active'}"
 								codeId={{c.id}}>
 								<td name="codeCell">{{c.code}}</td>
 								<td name="descriptionCell">{{c.description}}</td>
@@ -200,7 +200,7 @@
 								<th>Timeframe</th>
 								<th>Cost</th>
 							</tr>
-							<tr name="codeRow" ng-repeat="c in codes | filter: {deleted: 'edited'}"
+							<tr name="codeRow" ng-repeat="c in codes | filter: {status: 'edited'}"
 								codeId={{c.id}}>
 								<td name="codeCell">{{c.code}}</td>
 								<td name="descriptionCell">{{c.description}}</td>
@@ -217,7 +217,7 @@
 								<th>Timeframe</th>
 								<th>Cost</th>
 							</tr>
-							<tr name="codeRow" ng-repeat="c in codes | filter: {deleted: 'yes'}"
+							<tr name="codeRow" ng-repeat="c in codes | filter: {status: 'deleted'}"
 								codeId={{c.id}}>
 								<td name="codeCell">{{c.code}}</td>
 								<td name="descriptionCell">{{c.description}}</td>

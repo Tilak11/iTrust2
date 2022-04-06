@@ -30,16 +30,16 @@ public class CPTCodeForm {
      */
     private String timeFrame;
     
-    private String deleted;
+    private String status;
 
     
 
-	public String getDeleted() {
-		return deleted;
+	public String getStatus() {
+		return status;
 	}
 
-	public void setDeleted(String deleted) {
-		this.deleted = deleted;
+	public void setStatus(String status) {
+		this.status = status;
 	}
 
     /**
@@ -61,7 +61,7 @@ public class CPTCodeForm {
         setId( code.getId() );
         setCost( code.getCost() );
         setTimeFrame( code.getTimeFrame() );
-        setDeleted(code.getDeleted());
+        setStatus(code.getStatus());
     }
 
     /**
