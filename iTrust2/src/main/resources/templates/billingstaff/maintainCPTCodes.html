@@ -13,7 +13,15 @@
 
 				$scope.duplicate = false;
 				$scope.codes = [];
+				$scope.edited = [];
 				$scope.code = {
+						code :' ',
+						description: '',
+						timeFrame:'',
+						cost:'',
+						deleted: 'no'
+				};
+				$scope.editedCode = {
 						code :' ',
 						description: '',
 						timeFrame:'',
@@ -91,17 +99,22 @@
 				$scope.editRow = function(code){
 						$scope.editClicked = true;
 						$scope.id = code.id;
+						$scope.editedCode.code = code.code;					
+						$scope.editedCode.description = code.description;					
+						$scope.editedCode.timeFrame = code.timeFrame;					
+						$scope.editedCode.cost = code.cost;
 						$scope.code.code = code.code;					
 						$scope.code.description = code.description;					
 						$scope.code.timeFrame = code.timeFrame;					
-						$scope.code.cost = code.cost;					
+						$scope.code.cost = code.cost;		
+						console.log("edit " ,$scope.editedCode);
 				}
 				
 				$scope.updateRow = function(){
 					console.log("in up");
 					console.log($scope.code);
 					for (var i=0; i<$scope.codes.length; i++){
-						if($scope.codes[i].code === $scope.code.code && $scope.codes[i].id != $scope.id && $scope.codes[i].deleted=== 'no'){
+						if($scope.codes[i].code === $scope.code.code && $scope.codes[i].id != $scope.id && $scope.codes[i].deleted != 'yes' &&  $scope.codes[i].deleted != 'edited'){
 							$scope.duplicate = true;
 							$scope.errorAdding = "Code already exists";
 							return;
@@ -115,13 +128,33 @@
 								$scope.loadTable();
 								$scope.code.code = "";
 								$scope.code.description = "";
-								$scope.errorAdding = "";
 								$scope.code.timeFrame = "";
 								$scope.code.cost = "";
+							
+								$scope.errorAdding = "";
 								$scope.editClicked = false;
 							}, function(rejection) {
 								$scope.errorAdding = "Could not add code";
 							})
+					$scope.editedCode.deleted = "edited";
+					$http.post("/iTrust2/api/v1/cptcodes", $scope.editedCode).then(
+								function(response) {
+									$scope.loadTable();
+									$scope.editedCode.code = "";
+									$scope.editedCode.description = "";
+									$scope.editedCode.timeFrame = "";
+									$scope.editedCode.cost = "";
+									$scope.editedCode.deleted = "edited";
+									$scope.errorAdding = "";
+								}, function(rejection) {
+									$scope.errorAdding = "Could not add code";
+					})
+					console.log("update", $scope.edited);
+					$scope.edited.push($scope.editedCode);
+					/**$scope.editedCode.code = "";
+					$scope.editedCode.description = "";
+					$scope.editedCode.timeFrame = "";
+					$scope.editedCode.cost = ""; */
 
 				}
 				
@@ -147,7 +180,7 @@
 								<th>Timeframe</th>
 								<th>Cost</th>
 							</tr>
-							<tr name="codeRow" ng-repeat="c in codes | filter: {deleted: 'no'}"
+							<tr name="codeRow" ng-repeat="c in codes | filter: {deleted:'no'}"
 								codeId={{c.id}}>
 								<td name="codeCell">{{c.code}}</td>
 								<td name="descriptionCell">{{c.description}}</td>
@@ -157,6 +190,23 @@
 									class="btn btn-primary" ng-click="editRow(c)" /></td>
 								<td><input type="button" value="Remove"
 									class="btn btn-primary" ng-click="removeRow(c)" /></td>
+							</tr>
+						</table>
+					<h3> Edited Codes</h3>
+					<table class="table">
+							<tr>
+								<th>CPT Code</th>
+								<th>Description</th>
+								<th>Timeframe</th>
+								<th>Cost</th>
+							</tr>
+							<tr name="codeRow" ng-repeat="c in codes | filter: {deleted: 'edited'}"
+								codeId={{c.id}}>
+								<td name="codeCell">{{c.code}}</td>
+								<td name="descriptionCell">{{c.description}}</td>
+								<td name="timeCell" >{{c.timeFrame}}</td>
+								<td name="costCell" >${{c.cost}}</td>
+		
 							</tr>
 						</table>
 					<h3> Deleted Codes</h3>
