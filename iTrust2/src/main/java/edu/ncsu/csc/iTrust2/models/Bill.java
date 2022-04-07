@@ -102,7 +102,7 @@ public class Bill extends DomainObject {
      * @return the bill id
      */
     @Override
-    public final Long getId () {
+    public Long getId () {
         return id;
     }
 
