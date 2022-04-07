@@ -144,6 +144,11 @@ public class OfficeVisitForm implements Serializable {
     private List<PrescriptionForm> prescriptions;
 
     /**
+     * List of active CPT codes
+     */
+    private List<CPTCodeForm>      codes;
+
+    /**
      * The visit form with ophthalmology details
      */
     private OphthalmologyVisitForm ophthalmologyVisitForm;
@@ -163,6 +168,7 @@ public class OfficeVisitForm implements Serializable {
         setPreScheduled( ( (Boolean) ( ov.getAppointment() != null ) ).toString() );
         setDiagnoses( new ArrayList<DiagnosisForm>() );
         setPrescriptions( ov.getPrescriptions().stream().map( PrescriptionForm::new ).collect( Collectors.toList() ) );
+        setCodes( ov.getCodes().stream().map( CPTCodeForm::new ).collect( Collectors.toList() ) );
     }
 
     /**
@@ -543,6 +549,25 @@ public class OfficeVisitForm implements Serializable {
      */
     public List<PrescriptionForm> getPrescriptions () {
         return prescriptions;
+    }
+
+    /**
+     * Sets the list of CPT Code associated with this visit
+     *
+     * @param codes
+     *            The list of CPT Code
+     */
+    public void setCodes ( final List<CPTCodeForm> codes ) {
+        this.codes = codes;
+    }
+
+    /**
+     * Returns the list of CPT Code for this visit
+     *
+     * @return The list of CPT Codes
+     */
+    public List<CPTCodeForm> getCodes () {
+        return this.codes;
     }
 
     /**

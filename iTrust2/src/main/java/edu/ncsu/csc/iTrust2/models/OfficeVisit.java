@@ -36,6 +36,13 @@ import edu.ncsu.csc.iTrust2.utils.ValidationUtil;
 public class OfficeVisit extends DomainObject {
 
     /**
+     * List of active CPT codes
+     */
+    @OneToMany ( cascade = CascadeType.ALL )
+    @JsonManagedReference
+    private List<CPTCode>        codes;
+
+    /**
      * The patient of this office visit
      */
     @NotNull
@@ -449,6 +456,25 @@ public class OfficeVisit extends DomainObject {
      */
     public List<Prescription> getPrescriptions () {
         return prescriptions;
+    }
+
+    /**
+     * Sets the list of CPT Code associated with this visit
+     *
+     * @param codes
+     *            The list of CPT Code
+     */
+    public void setCodes ( final List<CPTCode> codes ) {
+        this.codes = codes;
+    }
+
+    /**
+     * Returns the list of CPT Code for this visit
+     *
+     * @return The list of CPT Codes
+     */
+    public List<CPTCode> getCodes () {
+        return this.codes;
     }
 
     /**
