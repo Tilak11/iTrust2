@@ -360,7 +360,7 @@ public enum TransactionType {
     /**
      * An upcoming Vaccination Certificate was recieved.
      */
-    VACCINATION_CERTIFICATE_GET ( 1802, "Vaccination certificate was downloaded", true );
+    VACCINATION_CERTIFICATE_GET ( 1802, "Vaccination certificate was downloaded", true ), CPT_VIEW_ALL(0, "CPT view", true);
 
     /**
      * Creates a TransactionType for logging events
