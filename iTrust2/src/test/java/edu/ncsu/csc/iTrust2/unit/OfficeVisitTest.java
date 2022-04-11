@@ -26,6 +26,7 @@ import edu.ncsu.csc.iTrust2.TestConfig;
 import edu.ncsu.csc.iTrust2.forms.OphthalmologyVisitForm;
 import edu.ncsu.csc.iTrust2.forms.UserForm;
 import edu.ncsu.csc.iTrust2.models.BasicHealthMetrics;
+import edu.ncsu.csc.iTrust2.models.CPTCode;
 import edu.ncsu.csc.iTrust2.models.Diagnosis;
 import edu.ncsu.csc.iTrust2.models.Drug;
 import edu.ncsu.csc.iTrust2.models.Hospital;
@@ -191,6 +192,26 @@ public class OfficeVisitTest {
 
         visit.setPrescriptions( pr );
 
+        final CPTCode c1 = new CPTCode();
+        c1.setCode( "99292" );
+        c1.setDescription( "c1" );
+        c1.setId( 1L );
+        c1.setCost( 100000.00 );
+        c1.setTimeFrame( "15-29 minutes" );
+
+        final CPTCode c2 = new CPTCode();
+        c2.setCode( "99293" );
+        c2.setDescription( "c2" );
+        c2.setId( 2L );
+        c2.setCost( 100000.00 );
+        c2.setTimeFrame( "15-29 minutes" );
+
+        final List<CPTCode> cptList = new ArrayList<>();
+        cptList.add( c1 );
+        cptList.add( c2 );
+
+        visit.setCodes( cptList );
+
         /* And that cascade actions work too */
 
         officeVisitService.save( visit );
@@ -198,6 +219,7 @@ public class OfficeVisitTest {
         retrieved = officeVisitService.findAll().get( 0 );
 
         Assert.assertEquals( 2, retrieved.getPrescriptions().size() );
+        Assert.assertEquals( 2, retrieved.getCodes().size() );
 
     }
 
@@ -355,4 +377,5 @@ public class OfficeVisitTest {
         assertEquals( 20, retrieved.getOphthalmologyMetrics().getVisualAcuityLeft().intValue() );
 
     }
+
 }
