@@ -113,7 +113,6 @@ public class APIOfficeVisitController extends APIController {
     @PostMapping ( BASE_PATH + "/officevisits" )
     @PreAuthorize ( "hasAnyRole('ROLE_HCP')" )
     public ResponseEntity createOfficeVisit ( @RequestBody final OfficeVisitForm visitForm ) {
-    	System.out.println("here ->>> "+ visitForm.getCodes().get(0).getCode());
         try {
             visitForm.setHcp( LoggerUtil.currentUser() );
             final OfficeVisit visit = officeVisitService.build( visitForm );
