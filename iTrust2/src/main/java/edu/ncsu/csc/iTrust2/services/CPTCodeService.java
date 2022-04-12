@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Component;
 
+import edu.ncsu.csc.iTrust2.forms.CPTCodeForm;
 import edu.ncsu.csc.iTrust2.models.CPTCode;
 import edu.ncsu.csc.iTrust2.models.User;
 import edu.ncsu.csc.iTrust2.models.enums.Role;
@@ -54,13 +55,23 @@ public class CPTCodeService extends Service<CPTCode, Long> {
         final User user = service.findByName( LoggerUtil.currentUser() );
         final Collection<Role> roles = user.getRoles();
 
-        if ( roles.contains( Role.ROLE_BILLING_STAFF )
+        if ( roles.contains( Role.ROLE_HCP ) || roles.contains( Role.ROLE_BILLING_STAFF )
                 || ( roles.contains( Role.ROLE_OPH ) && roles.contains( Role.ROLE_HCP ) ) ) {
             return repository.findAll();
         }
         return  null;
 
      
+    }
+    
+    public CPTCode build(final CPTCodeForm form) {
+    	final CPTCode c = new CPTCode();
+    	c.setCode(form.getCode());
+    	c.setCost(form.getCost());
+    	c.setDescription(form.getDescription());
+    	c.setTimeFrame(form.getTimeFrame());
+    	c.setStatus(form.getStatus());
+    	return c;
     }
 
 }

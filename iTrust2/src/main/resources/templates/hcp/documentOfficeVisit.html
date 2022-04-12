@@ -3,7 +3,7 @@
 <head th:include="layout :: head(title=~{::title},links=~{::script})">
 <title>Document Office Visit</title>
 <script th:src="@{/js/dateTimeService.js}"
-		src="../js/dateTimeService.js"></script>
+	src="../js/dateTimeService.js"></script>
 </head>
 
 <body th:include="layout :: body" th:with="content=~{::content}">
@@ -162,6 +162,11 @@
                         function (response) {
                             $scope.icdcodes = response.data;
                         });
+                    /*Getting a list of CPT codes*/
+                    $http.get("/iTrust2/api/v1/cptcodes").then(
+                        function (response) {
+                            $scope.cptcodes = response.data;
+                        });
 
                     /*Getting a list of laboratory procedures*/
                     $http.get("/iTrust2/api/v1/personnel/getbyroles/ROLE_LABTECH").then(
@@ -182,12 +187,12 @@
                         });
 
                     /*Getting a list of lionc codes*/
-                    /*
+                    
                     $http.get("/iTrust2/api/v1/loinccodes").then(
                         function (response) {
                             $scope.loinccodes = response.data;
                         });
-*/
+
 
                     /*Checks Basic Health Metrics for correctness*/
                     function checkBasicHealthMetrics() {
@@ -400,6 +405,8 @@
                             
                             if ($scope.errorMsg == "") {
                                 $scope.visit.diagnoses = $scope.diagnoses;
+                                console.log("codes ", $scope.codes);
+                          		$scope.visit.codes = $scope.codes;
                                 $scope.visit.prescriptions = $scope.prescriptions;
                                 $scope.visit.prescriptions.forEach(function (p) {
                                     p.patient = $scope.visit.patient;
@@ -442,6 +449,7 @@
 
                     $scope.procedure = {};
                     $scope.procedures = [];
+                    $scope.CPTCode = "";
 
                     // Clears local variables for diagnosis form
                     function resetDiagnosisForm() {
@@ -457,6 +465,8 @@
                         $scope.endEntry = "";
                         $scope.renewalEntry = "";
                     }
+                    
+                    $scope.codes = [];
 
                     // Capture each diagnosis into an array
                     $scope.diagnoses = [];
@@ -475,6 +485,26 @@
                             $scope.diagnoses.push(d);
                             resetDiagnosisForm();
                         }
+                    }
+                    
+                    $scope.addCode = function () {
+                    	
+                        var d = {
+                                code: $scope.CPTCode.code,
+                                description: $scope.CPTCode.description,
+                                timeFrame: $scope.CPTCode.timeFrame,
+                                cost: $scope.CPTCode.cost
+                            }
+                       var found = false;
+                       for(var i=0; i<$scope.codes.length;i++ ){
+                        	if($scope.codes[i].code === d.code)
+                        		found = true;
+                        }
+                       if( !found){
+                          $scope.codes.push(d);   
+                       }
+                         console.log(d);
+
                     }
 
                     $scope.fillEyeDiagnosis = function () {
@@ -529,6 +559,11 @@
                     //remove local diagnosis from list
                     $scope.removeDiagnosis = function ($index) {
                         $scope.diagnoses.splice($index, 1);
+                    }
+                    
+                  //remove local cpt code from list
+                    $scope.removeCode = function ($index) {
+                        $scope.codes.splice($index, 1);
                     }
 
                     //remove local prescription from list
@@ -609,8 +644,8 @@
 														style="max-height: 15%; overflow: auto; list-style: none;">
 														<li ng-repeat="type in types"><label> <input
 																type="radio" ng-model="$parent.visit.type"
-																name="{{type}}" value="{{type}}" required="true" /> {{type
-																| humanize}}
+																name="{{type}}" value="{{type}}" required="true" />
+																{{type | humanize}}
 														</label></li>
 													</ul>
 												</div>
@@ -641,7 +676,10 @@
 									<div class="col-md-4">
 										<div class="panel panel-info">
 											<div class="panel-heading">
-												<h4>Basic Health Metrics <span ng-show="visit.type == 'GENERAL_OPHTHALMOLOGY'">(Optional)</span></h4>
+												<h4>
+													Basic Health Metrics <span
+														ng-show="visit.type == 'GENERAL_OPHTHALMOLOGY'">(Optional)</span>
+												</h4>
 											</div>
 											<div class="panel-body">
 												<div class="form-group row">
@@ -754,9 +792,10 @@
 											</div>
 										</div>
 									</div>
-									
+
 									<!-- Ophthalmology-only: Eye Metrics panel -->
-									<div ng-show="visit.type == 'GENERAL_OPHTHALMOLOGY'" class="col-md-4">
+									<div ng-show="visit.type == 'GENERAL_OPHTHALMOLOGY'"
+										class="col-md-4">
 										<div class="panel panel-info">
 											<div class="panel-heading">
 												<h4>Eye Metrics</h4>
@@ -768,7 +807,8 @@
 													</div>
 													<div class="col-xs-6">
 														<input class="form-control" name="visualAcuityLeft"
-															ng-model="visit.ophthalmologyVisitForm.visualAcuityLeft" required="true" type="text">
+															ng-model="visit.ophthalmologyVisitForm.visualAcuityLeft"
+															required="true" type="text">
 													</div>
 												</div>
 												<div class="form-group row">
@@ -777,7 +817,8 @@
 													</div>
 													<div class="col-xs-6">
 														<input class="form-control" name="visualAcuityRight"
-															ng-model="visit.ophthalmologyVisitForm.visualAcuityRight" required="true" type="text">
+															ng-model="visit.ophthalmologyVisitForm.visualAcuityRight"
+															required="true" type="text">
 													</div>
 												</div>
 												<div class="form-group row">
@@ -786,8 +827,8 @@
 													</div>
 													<div class="col-xs-6">
 														<input class="form-control" name="sphereLeft"
-															ng-model="visit.ophthalmologyVisitForm.sphereLeft" required="true"
-															type="text">
+															ng-model="visit.ophthalmologyVisitForm.sphereLeft"
+															required="true" type="text">
 													</div>
 												</div>
 												<div class="form-group row">
@@ -796,7 +837,8 @@
 													</div>
 													<div class="col-xs-6">
 														<input class="form-control" name="sphereRight"
-															ng-model="visit.ophthalmologyVisitForm.sphereRight" required="true" type="text">
+															ng-model="visit.ophthalmologyVisitForm.sphereRight"
+															required="true" type="text">
 													</div>
 												</div>
 												<div class="form-group row">
@@ -805,7 +847,8 @@
 													</div>
 													<div class="col-xs-6">
 														<input class="form-control" name="cylinderLeft"
-															ng-model="visit.ophthalmologyVisitForm.cylinderLeft" required="true" type="text">
+															ng-model="visit.ophthalmologyVisitForm.cylinderLeft"
+															required="true" type="text">
 													</div>
 												</div>
 												<div class="form-group row">
@@ -814,7 +857,8 @@
 													</div>
 													<div class="col-xs-6">
 														<input class="form-control" name="cylinderRight"
-															ng-model="visit.ophthalmologyVisitForm.cylinderRight" required="true" type="text">
+															ng-model="visit.ophthalmologyVisitForm.cylinderRight"
+															required="true" type="text">
 													</div>
 												</div>
 												<div class="form-group row">
@@ -823,7 +867,8 @@
 													</div>
 													<div class="col-xs-6">
 														<input class="form-control" name="axisLeft"
-															ng-model="visit.ophthalmologyVisitForm.axisLeft" required="true" type="text">
+															ng-model="visit.ophthalmologyVisitForm.axisLeft"
+															required="true" type="text">
 													</div>
 												</div>
 												<div class="form-group row">
@@ -832,16 +877,19 @@
 													</div>
 													<div class="col-xs-6">
 														<input class="form-control" name="axisRight"
-															ng-model="visit.ophthalmologyVisitForm.axisRight" required="true" type="text">
+															ng-model="visit.ophthalmologyVisitForm.axisRight"
+															required="true" type="text">
 													</div>
 												</div>
-												
+
 											</div>
 										</div>
 									</div>
 
 									<!-- Diagnosis Panel  -->
-									<div ng-show="visit.type == 'GENERAL_CHECKUP' || visit.type == 'GENERAL_OPHTHALMOLOGY'" class="col-md-4">
+									<div
+										ng-show="visit.type == 'GENERAL_CHECKUP' || visit.type == 'GENERAL_OPHTHALMOLOGY'"
+										class="col-md-4">
 										<div class="panel panel-info">
 											<div class="panel-heading">
 												<h4>Diagnosis</h4>
@@ -891,6 +939,64 @@
 																		<button class="btn btn-danger btn-xs"
 																			ng-click="removeDiagnosis($index)"
 																			name="removeDiagnosis">
+																			<b>x</b>
+																		</button>
+																	</div>
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+
+											</div>
+										</div>
+									</div>
+
+									<!-- CPT Code Panel  -->
+									<div
+										ng-show="visit.type == 'GENERAL_CHECKUP' || visit.type == 'GENERAL_OPHTHALMOLOGY'"
+										class="col-md-4">
+										<div class="panel panel-info">
+											<div class="panel-heading">
+												<h4>Add CPT Codes</h4>
+											</div>
+											<div class="panel-body">
+												<div class="form-group row">
+													<div class="col-xs-6">
+														<label>CPT Codes:</label>
+													</div>
+													<div class="col-xs-6 radio-box">
+														<div class="form-check">
+															<ul style="list-style: none;">
+																<li ng-repeat="c in cptcodes | filter: {status:'active'}"><label> <input
+																		type="radio" ng-model="$parent.CPTCode"
+																		id="{{c.code}}" name="{{c.description}}" ng-value="c"
+																		required="true" /> {{c.code}} | {{c.description}} |
+																		{{c.timeFrame}} | {{c.cost}}
+																</label></li>
+															</ul>
+														</div>
+													</div>
+												</div>
+
+
+												<div class="form-group row text-center">
+													<div class="col-md-12">
+														<button class="btn btn-success" ng-click="addCode()"
+															name="addCode">Add CPT Code</button>
+													</div>
+												</div>
+
+												<div class="form-group row">
+													<div class="col-md-12">
+														<div class="panel panel-default">
+															<div class="panel-heading">Added Codes</div>
+															<div class="panel-body">
+																<div class="row" ng-repeat="c in codes">
+																	<div class="col-md-4">{{c.code}}</div>
+																	<div class="col-md-4">
+																		<button class="btn btn-danger btn-xs"
+																			ng-click="removeCode($index)" name="removeCode">
 																			<b>x</b>
 																		</button>
 																	</div>
@@ -1083,10 +1189,9 @@
 															<div class="panel-body">
 																<div class="row" ng-repeat="p in procedures">
 																	<div>
-																		<b>Code:</b> {{p.loinc.code}} <br> 
-																		<b>Common Name:</b> {{p.loinc.commonName}} <br>
-																		<b>Priority:</b> {{p.priority}} <br>
-																		<b>Status:</b> {{p.status}} <br>
+																		<b>Code:</b> {{p.loinc.code}} <br> <b>Common
+																			Name:</b> {{p.loinc.commonName}} <br> <b>Priority:</b>
+																		{{p.priority}} <br> <b>Status:</b> {{p.status}} <br>
 																		<b>Comments:</b> {{p.comments}} <br>
 																	</div>
 																	<br>

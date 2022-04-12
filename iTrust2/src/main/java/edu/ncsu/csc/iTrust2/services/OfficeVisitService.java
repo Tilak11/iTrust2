@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Component;
 
+import edu.ncsu.csc.iTrust2.forms.CPTCodeForm;
 import edu.ncsu.csc.iTrust2.forms.OfficeVisitForm;
 import edu.ncsu.csc.iTrust2.forms.PrescriptionForm;
 import edu.ncsu.csc.iTrust2.models.AppointmentRequest;
@@ -79,6 +80,11 @@ public class OfficeVisitService extends Service<OfficeVisit, Long> {
      */
     @Autowired
     private DiagnosisService            diagnosisService;
+    /**
+     * cpt service
+     */
+    @Autowired
+    private CPTCodeService            cptService;
 
     @Override
     protected JpaRepository<OfficeVisit, Long> getRepository () {
@@ -175,6 +181,7 @@ public class OfficeVisitService extends Service<OfficeVisit, Long> {
         ov.setHospital( hospitalService.findByName( ovf.getHospital() ) );
         ov.setBasicHealthMetrics( bhmService.build( ovf ) );
         ov.setOphthalmologyMetrics( omService.build( ovf ) );
+       
         // associate all diagnoses with this visit
         if ( ovf.getDiagnoses() != null ) {
             ov.setDiagnoses(
@@ -190,6 +197,10 @@ public class OfficeVisitService extends Service<OfficeVisit, Long> {
         final List<PrescriptionForm> ps = ovf.getPrescriptions();
         if ( ps != null ) {
             ov.setPrescriptions( ps.stream().map( prescriptionService::build ).collect( Collectors.toList() ) );
+        }
+        final List<CPTCodeForm> cpt = ovf.getCodes();
+        if ( cpt != null ) {
+        	ov.setCodes( cpt.stream().map( cptService::build ).collect( Collectors.toList() ) );
         }
 
         final Patient p = (Patient) ov.getPatient();

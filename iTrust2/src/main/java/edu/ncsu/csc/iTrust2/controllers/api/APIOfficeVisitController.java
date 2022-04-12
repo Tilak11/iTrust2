@@ -113,10 +113,10 @@ public class APIOfficeVisitController extends APIController {
     @PostMapping ( BASE_PATH + "/officevisits" )
     @PreAuthorize ( "hasAnyRole('ROLE_HCP')" )
     public ResponseEntity createOfficeVisit ( @RequestBody final OfficeVisitForm visitForm ) {
+    	System.out.println("here ->>> "+ visitForm.getCodes().get(0).getCode());
         try {
             visitForm.setHcp( LoggerUtil.currentUser() );
             final OfficeVisit visit = officeVisitService.build( visitForm );
-
             if ( null != visit.getId() && officeVisitService.existsById( visit.getId() ) ) {
                 return new ResponseEntity(
                         errorResponse( "Office visit with the id " + visit.getId() + " already exists" ),
