@@ -145,7 +145,7 @@ public class APIOfficeVisitController extends APIController {
      * @return response
      */
     @PutMapping ( BASE_PATH + "/officevisits/{id}" )
-    @PreAuthorize ( "hasAnyRole('ROLE_HCP')" )
+    @PreAuthorize ( "hasAnyRole('ROLE_HCP') or hasAnyRole('ROLE_BILLING_STAFF')")
     public ResponseEntity updateOfficeVisit ( @PathVariable final Long id,
             @RequestBody final OfficeVisitForm visitForm ) {
         try {
