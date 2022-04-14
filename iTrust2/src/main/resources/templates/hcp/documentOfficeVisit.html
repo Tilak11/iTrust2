@@ -406,8 +406,19 @@
                             if ($scope.errorMsg == "") {
                                 $scope.visit.diagnoses = $scope.diagnoses;
                                 console.log("codes ", $scope.codes);
+                                
                           		$scope.visit.codes = $scope.codes;
+                          		var t = 0;
+                          		for(var i=0; i < $scope.codes.length; i++){
+                          			t= t+ $scope.codes[i].cost;
+                          		}
+                          		//$scope.visit.bill.CPTCodes = $scope.codes;
+                          		$scope.visit.total= t;
+                          		$scope.visit.billStatus = "unpaid";
                                 $scope.visit.prescriptions = $scope.prescriptions;
+                                $scope.visit.paymentDate = "";
+                                $scope.visit.paymentType = "";
+                                
                                 $scope.visit.prescriptions.forEach(function (p) {
                                     p.patient = $scope.visit.patient;
                                 });
@@ -450,6 +461,7 @@
                     $scope.procedure = {};
                     $scope.procedures = [];
                     $scope.CPTCode = "";
+                  
 
                     // Clears local variables for diagnosis form
                     function resetDiagnosisForm() {

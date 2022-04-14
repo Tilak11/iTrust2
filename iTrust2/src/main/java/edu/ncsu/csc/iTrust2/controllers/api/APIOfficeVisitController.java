@@ -50,7 +50,7 @@ public class APIOfficeVisitController extends APIController {
      * @return list of office visits
      */
     @GetMapping ( BASE_PATH + "/officevisits" )
-    @PreAuthorize ( "hasAnyRole('ROLE_HCP')" )
+    @PreAuthorize ( "hasAnyRole('ROLE_HCP') or hasAnyRole('ROLE_BILLING_STAFF')")
     public List<OfficeVisit> getOfficeVisits () {
         loggerUtil.log( TransactionType.VIEW_ALL_OFFICE_VISITS, LoggerUtil.currentUser() );
         return officeVisitService.findAll();

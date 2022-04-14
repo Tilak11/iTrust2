@@ -131,8 +131,50 @@ public class OfficeVisit extends DomainObject {
     @OneToMany ( cascade = CascadeType.ALL )
     @JsonManagedReference
     private List<Prescription>   prescriptions;
+    
+    
+    public String getPaymentType() {
+		return paymentType;
+	}
 
-    /**
+	public void setPaymentType(String paymentType) {
+		this.paymentType = paymentType;
+	}
+
+	public String getBillStatus() {
+		return billStatus;
+	}
+
+	public void setBillStatus(String billStatus) {
+		this.billStatus = billStatus;
+	}
+
+	public String getPaymentDate() {
+		return paymentDate;
+	}
+
+	public void setPaymentDate(String paymentDate) {
+		this.paymentDate = paymentDate;
+	}
+
+	public double getTotal() {
+		return total;
+	}
+
+	public void setTotal(double total) {
+		this.total = total;
+	}
+
+	private String billStatus;
+    
+    private String paymentDate;
+    
+    private double total;
+    
+    private String paymentType;
+
+
+	/**
      * The ophthalmology metric data associated with this office visit.
      */
     @OneToOne ( cascade = CascadeType.ALL )

@@ -30,48 +30,50 @@ import edu.ncsu.csc.iTrust2.adapters.LocalDateAdapter;
 @Entity
 public class Bill extends DomainObject {
 
-    /** ID of this Bill */
-    @Id
-    @GeneratedValue ( strategy = GenerationType.AUTO )
-    private Long          id;
+	/** ID of this Bill */
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private Long id;
 
-    /** Amount of bill */
-    @Min ( 0 )
-    private double        amount;
+	/** Amount of bill */
+	@Min(0)
+	private double amount;
 
-    /** Date of the bill is to start at */
-    @NotNull
-    @Basic
-    // Allows the field to show up nicely in the database
-    @Convert ( converter = LocalDateConverter.class )
-    @JsonAdapter ( LocalDateAdapter.class )
-    private LocalDate     date;
+	/** Date of the bill is to start at */
+//    @NotNull
+//    @Basic
+//    // Allows the field to show up nicely in the database
+//    @Convert ( converter = LocalDateConverter.class )
+//    @JsonAdapter ( LocalDateAdapter.class )
+//    private LocalDate     date;
 
-    /** How the bill is paid, cash, check, credit card, or insurance */
-    private String        paymentMethod;
+	private String date;
 
-    /** Status of the bill payment, could be paid, unpaid, partially paid */
-    private String        status;
+	/** How the bill is paid, cash, check, credit card, or insurance */
+	private String paymentMethod;
 
-    /** Patient this Bill is for */
-    @NotNull
-    @ManyToOne ( cascade = CascadeType.ALL )
-    @JoinColumn ( name = "patient_id", columnDefinition = "varchar(100)" )
-    private User          patient;
+	/** Status of the bill payment, could be paid, unpaid, partially paid */
+	private String status;
 
-    /** Attending HCP during the appointment */
-    private String        attendingHCP;
+	/** Patient this Bill is for */
+//    @NotNull
+//    @ManyToOne ( cascade = CascadeType.ALL )
+//    @JoinColumn ( name = "patient_id", columnDefinition = "varchar(100)" )
+//    private User          patient;
 
-    /** List of CPT codes associated with the visit */
-    @OneToMany
-    private List<CPTCode> CPTCodes;
+	/** Attending HCP during the appointment */
+	// private String attendingHCP;
 
-    /** For Hibernate/Thymeleaf _must_ be an empty constructor */
-    public Bill () {
+	/** List of CPT codes associated with the visit */
+	@OneToMany
+	private List<CPTCode> CPTCodes;
 
-    }
+	/** For Hibernate/Thymeleaf _must_ be an empty constructor */
+	public Bill() {
 
-    /**
+	}
+
+	/**
      * Bill Constructor
      *
      * @param amount
@@ -79,170 +81,163 @@ public class Bill extends DomainObject {
      * @param paymentMethod
      * @param status
      */
-    public Bill ( final double amount, final LocalDate date, final String paymentMethod, final String status ) {
-        this.amount = amount;
-        this.date = date;
-        this.paymentMethod = paymentMethod;
-        this.status = status;
+    public Bill ( final double amount, final String date, final String paymentMethod, final String status, final List<CPTCode> codes ) {
+       setAmount(amount);
+       setDate(date);
+       this.setPaymentMethod(paymentMethod);
+       this.setStatus(status);
+       this.setCPTCodes(codes);
     }
 
-    /**
-     * Sets the Bill's unique id.
-     *
-     * @param id
-     *            the bill id
-     */
-    public void setId ( final Long id ) {
-        this.id = id;
-    }
+	/**
+	 * Sets the Bill's unique id.
+	 *
+	 * @param id the bill id
+	 */
+	public void setId(final Long id) {
+		this.id = id;
+	}
 
-    /**
-     * Returns the id associated with the Bill.
-     *
-     * @return the bill id
-     */
-    @Override
-    public final Long getId () {
-        return id;
-    }
+	/**
+	 * Returns the id associated with the Bill.
+	 *
+	 * @return the bill id
+	 */
+	@Override
+	public final Long getId() {
+		return id;
+	}
 
-    /**
-     * Set new amount of bill
-     *
-     * @param amount
-     */
-    public void setAmount ( final double amount ) {
-        this.amount = amount;
-    }
+	/**
+	 * Set new amount of bill
+	 *
+	 * @param amount
+	 */
+	public void setAmount(final double amount) {
+		this.amount = amount;
+	}
 
-    /**
-     * Return amount of bill
-     *
-     * @return the amount
-     */
-    public double getAmount () {
-        return amount;
-    }
+	/**
+	 * Return amount of bill
+	 *
+	 * @return the amount
+	 */
+	public double getAmount() {
+		return amount;
+	}
 
-    /**
-     * Set date of bill
-     *
-     * @param date
-     */
-    public void setDate ( final LocalDate date ) {
-        this.date = date;
-    }
+	/**
+	 * Set date of bill
+	 *
+	 * @param date
+	 */
+	public void setDate(final String date) {
+		this.date = date;
+	}
 
-    /**
-     * Return date of bill
-     *
-     * @return date
-     */
-    public LocalDate getDate () {
-        return date;
-    }
+	/**
+	 * Return date of bill
+	 *
+	 * @return date
+	 */
+	public String getDate() {
+		return date;
+	}
 
-    /**
-     * Set bill payment method
-     *
-     * @param paymentMethod
-     */
-    public void setPaymentMethod ( final String paymentMethod ) {
-        if ( paymentMethod.equals( "cash" ) || paymentMethod.equals( "check" ) || paymentMethod.equals( "credit card" )
-                || paymentMethod.equals( "insurance" ) ) {
-            this.paymentMethod = paymentMethod;
-        }
-    }
+	/**
+	 * Set bill payment method
+	 *
+	 * @param paymentMethod
+	 */
+	public void setPaymentMethod(final String paymentMethod) {
+		if (paymentMethod.equals("cash") || paymentMethod.equals("check") || paymentMethod.equals("credit card")
+				|| paymentMethod.equals("insurance")) {
+			this.paymentMethod = paymentMethod;
+		}
+	}
 
-    /**
-     * Return bill payment method
-     *
-     * @return paymentMethod
-     */
-    public String getPaymentMethod () {
-        return paymentMethod;
-    }
+	/**
+	 * Return bill payment method
+	 *
+	 * @return paymentMethod
+	 */
+	public String getPaymentMethod() {
+		return paymentMethod;
+	}
 
-    /**
-     * Set status of bill
-     *
-     * @param bill
-     *            status
-     */
-    public void setStatus ( final String status ) {
-        if ( status.equals( "paid" ) || status.equals( "partially paid" ) || status.equals( "unpaid" ) ) {
-            this.status = status;
-        }
-    }
+	/**
+	 * Set status of bill
+	 *
+	 * @param bill status
+	 */
+	public void setStatus(final String status) {
+		if (status.equals("paid") || status.equals("partially paid") || status.equals("unpaid")) {
+			this.status = status;
+		}
+	}
 
-    /**
-     * Return amount of bill
-     *
-     * @return status of bill
-     */
-    public String getStatus () {
-        return status;
-    }
+	/**
+	 * Return amount of bill
+	 *
+	 * @return status of bill
+	 */
+	public String getStatus() {
+		return status;
+	}
 
-    /**
-     * Returns the user associated with this bill.
-     *
-     * @return the patient
-     */
-    public User getPatient () {
-        return patient;
-    }
+//    /**
+//     * Returns the user associated with this bill.
+//     *
+//     * @return the patient
+//     */
+//    public User getPatient () {
+//        return patient;
+//    }
+//
+//    /**
+//     * Sets the bill's patient to the given user
+//     *
+//     * @param user
+//     *            the user
+//     */
+//    public void setPatient ( final User user ) {
+//        this.patient = user;
+//    }
 
-    /**
-     * Sets the bill's patient to the given user
-     *
-     * @param user
-     *            the user
-     */
-    public void setPatient ( final User user ) {
-        this.patient = user;
-    }
+//    /**
+//     * Set name of HCP
+//     *
+//     * @param HCP
+//     */
+//    public void setAttendingHCP ( final String hcp ) {
+//        this.attendingHCP = hcp;
+//    }
+//
+//    /**
+//     * Return attending HCP
+//     *
+//     * @return name of attending HCP
+//     */
+//    public String getAttendingHCP () {
+//        return attendingHCP;
+//    }
 
-    /**
-     * Set name of HCP
-     *
-     * @param HCP
-     */
-    public void setAttendingHCP ( final String hcp ) {
-        this.attendingHCP = hcp;
-    }
+	/**
+	 * Return list of CPTCodes
+	 *
+	 * @return list of CPT codes
+	 */
+	public List<CPTCode> getCPTCodes() {
+		return CPTCodes;
+	}
 
-    /**
-     * Return attending HCP
-     *
-     * @return name of attending HCP
-     */
-    public String getAttendingHCP () {
-        return attendingHCP;
-    }
-
-    /**
-     * Return list of CPTCodes
-     *
-     * @return list of CPT codes
-     */
-    public List<CPTCode> getCPTCodes () {
-        return CPTCodes;
-    }
-
-    /**
-     * Add cpt code to list
-     *
-     * @return true if code is added
-     */
-    public boolean addCPTCode ( final CPTCode cpt ) {
-        for ( int i = 0; i < CPTCodes.size(); i++ ) {
-            if ( CPTCodes.get( i ) == cpt ) {
-                return false;
-            }
-        }
-        CPTCodes.add( cpt );
-        return true;
-    }
+	/**
+	 * Add cpt code to list
+	 *
+	 * @return true if code is added
+	 */
+	public void setCPTCodes(List<CPTCode> codes) {
+		this.CPTCodes = codes;
+	}
 
 }

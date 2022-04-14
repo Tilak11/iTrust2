@@ -9,6 +9,7 @@ import javax.validation.constraints.NotEmpty;
 
 import org.hibernate.validator.constraints.Length;
 
+import edu.ncsu.csc.iTrust2.models.Bill;
 import edu.ncsu.csc.iTrust2.models.OfficeVisit;
 import edu.ncsu.csc.iTrust2.models.enums.HouseholdSmokingStatus;
 import edu.ncsu.csc.iTrust2.models.enums.PatientSmokingStatus;
@@ -152,6 +153,51 @@ public class OfficeVisitForm implements Serializable {
      * The visit form with ophthalmology details
      */
     private OphthalmologyVisitForm ophthalmologyVisitForm;
+    
+
+    public String getPaymentType() {
+		return paymentType;
+	}
+
+	public void setPaymentType(String paymentType) {
+		this.paymentType = paymentType;
+	}
+
+	public String getBillStatus() {
+		return billStatus;
+	}
+
+	public void setBillStatus(String billStatus) {
+		this.billStatus = billStatus;
+	}
+
+	public String getPaymentDate() {
+		return paymentDate;
+	}
+
+	public void setPaymentDate(String paymentDate) {
+		this.paymentDate = paymentDate;
+	}
+
+	public double getTotal() {
+		return total;
+	}
+
+	public void setTotal(double total) {
+		this.total = total;
+	}
+
+	private String billStatus;
+    
+    private String paymentDate;
+    
+    private double total;
+    
+    private String paymentType;
+  
+
+    
+    
 
     /**
      * Creates an OfficeVisitForm from the OfficeVisit provided
@@ -169,6 +215,11 @@ public class OfficeVisitForm implements Serializable {
         setDiagnoses( new ArrayList<DiagnosisForm>() );
         setPrescriptions( ov.getPrescriptions().stream().map( PrescriptionForm::new ).collect( Collectors.toList() ) );
         setCodes( ov.getCodes().stream().map( CPTCodeForm::new ).collect( Collectors.toList() ) );
+        setBillStatus(ov.getBillStatus());
+        setPaymentDate(ov.getPaymentDate());
+        setTotal(ov.getTotal());
+        setPaymentType(ov.getPaymentType());
+    
     }
 
     /**

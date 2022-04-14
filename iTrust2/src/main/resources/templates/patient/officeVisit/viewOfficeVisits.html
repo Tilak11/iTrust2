@@ -469,11 +469,32 @@
 												<h4>CPT Codes</h4>
 											</div>
 											<div class="panel-body">
-												<div class="form-group row" ng-repeat="c in visit.codes">
+												<div class="form-group row" ng-repeat="c in visit.codes" >
 													<div class="col-xs-12 radio-box">
 														<div class="form-check">
 															<ul>
 																<li>{{c.code}} | {{c.description}} | {{c.timeFrame}} | ${{c.cost}}</li>
+															</ul>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+		
+														<!-- Bill Panel  -->
+									<div ng-show="visit.type == 'GENERAL_CHECKUP' || visit.type == 'GENERAL_OPHTHALMOLOGY'" class="col-md-4">
+										<div class="panel panel-info">
+											<div class="panel-heading">
+												<h4>Bill</h4>
+											</div>
+											<div class="panel-body">
+												<div class="form-group row" >
+													<div class="col-xs-12 radio-box">
+														<div class="form-check">
+															<ul>
+																<li>Amount: ${{visit.total}} </li>
+																<li>Bill Status: {{visit.billStatus}}  </li>
 															</ul>
 														</div>
 													</div>
