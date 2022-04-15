@@ -53,7 +53,7 @@
 				$scope.showPdf = true;
 			} 
     	  
-           $http.get("/iTrust2/api/v1/bills/").then(function (response) {
+           $http.get("/iTrust2/api/v1/bills/mybills").then(function (response) {
               $scope.bills = response.data;
               $scope.message = "";
               console.log("got bill");
@@ -104,11 +104,11 @@
 					<div class="col-md-12">
 						<div class="panel panel-primary">
 							<div class="panel-heading">
-								<h3> View Bills</h3>
+								<h3>Patient View Bills</h3>
 							</div>
 							<div class="panel-body">
 								<table class="table table-bordered">
-									<caption>Patient Bills:</caption>
+									<caption>My Bills:</caption>
 									<thead>
 										<tr>
 											<th></th>
@@ -155,11 +155,14 @@
 						<div class="panel-heading">
 							<h3>iTrust2 Patient Bills</h3>
 						</div>
+						<div class="panel-body">
+							<p>This document contains sensitive information that is intended only for the named individual. Unauthorized copying, disclosure, or distribution of the contents is strictly prohibited.</p>
+						</div>
 					</div>
 					<div class="panel panel-default" id="export">
 						<div class="panel-body">
 							<table class="table table-bordered">
-									<caption>Patient Bills:</caption>
+									<caption>My Bills:</caption>
 									<thead>
 										<tr>
 											<th></th>

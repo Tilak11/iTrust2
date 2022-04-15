@@ -436,6 +436,18 @@
                                     $scope.message = "";
                                     $scope.errorMsg = "Error occurred creating office visit: " + rejection.data.message;
                                 })
+                                
+                                $http({
+                                    method: 'POST',
+                                    url: '/iTrust2/api/v1/bills',
+                                    data: $scope.visit
+                                }).then(function (response) {
+                                    $scope.errorMsg = "";
+                                    $scope.message = "Bill created successfully";
+                                }, function (rejection) {
+                                    $scope.message = "";
+                                    $scope.errorMsg = "Error occurred creating bill: " + rejection.data.message;
+                                })
                             }
                         }
                          else {

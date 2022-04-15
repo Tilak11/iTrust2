@@ -1,9 +1,10 @@
 package edu.ncsu.csc.iTrust2.models;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -15,11 +16,11 @@ import javax.persistence.OneToMany;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
-import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters.LocalDateConverter;
-
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.google.gson.annotations.JsonAdapter;
 
-import edu.ncsu.csc.iTrust2.adapters.LocalDateAdapter;
+import edu.ncsu.csc.iTrust2.adapters.ZonedDateTimeAdapter;
+import edu.ncsu.csc.iTrust2.adapters.ZonedDateTimeAttributeConverter;
 
 /**
  * Represents a patient bill.
@@ -42,9 +43,9 @@ public class Bill extends DomainObject {
     @NotNull
     @Basic
     // Allows the field to show up nicely in the database
-    @Convert ( converter = LocalDateConverter.class )
-    @JsonAdapter ( LocalDateAdapter.class )
-    private LocalDateTime date;
+    @Convert ( converter = ZonedDateTimeAttributeConverter.class )
+    @JsonAdapter ( ZonedDateTimeAdapter.class )
+    private ZonedDateTime date;
 
     /** How the bill is paid, cash, check, credit card, or insurance */
     private String        paymentMethod;
@@ -68,7 +69,8 @@ public class Bill extends DomainObject {
     private User          attendingHCP;
 
     /** List of CPT codes associated with the visit */
-    @OneToMany
+    @OneToMany ( cascade = CascadeType.ALL )
+    @JsonManagedReference
     private List<CPTCode> CPTCodes;
 
     /** For Hibernate/Thymeleaf _must_ be an empty constructor */
@@ -84,10 +86,10 @@ public class Bill extends DomainObject {
      * @param paymentMethod
      * @param status
      */
-    public Bill ( final double amount, final LocalDateTime date, final String paymentMethod, final String status,
+    public Bill ( final double amount, final ZonedDateTime date, final String paymentMethod, final String status,
             final List<CPTCode> codes ) {
         setTotal( amount );
-        setPaymentDate( date );
+        setDate( date );
         this.setPaymentMethod( paymentMethod );
         this.setBillStatus( status );
         this.setCPTCodes( codes );
@@ -133,21 +135,22 @@ public class Bill extends DomainObject {
     }
 
     /**
-     * Set date of bill
+     * Get the date of this bill
      *
-     * @param visitDate
+     * @return the date of this bill
      */
-    public void setPaymentDate ( final LocalDateTime visitDate ) {
-        this.date = visitDate;
+    public ZonedDateTime getDate () {
+        return date;
     }
 
     /**
-     * Return date of bill
+     * Set the date of this bill
      *
-     * @return date
+     * @param date
+     *            the date to set this bill to
      */
-    public @NotNull @NotNull @NotNull LocalDateTime getPaymentDate () {
-        return date;
+    public void setDate ( final ZonedDateTime date ) {
+        this.date = date;
     }
 
     /**
@@ -207,7 +210,7 @@ public class Bill extends DomainObject {
      * @param user
      *            the user
      */
-    public void setPatient ( final @NotNull Patient user ) {
+    public void setPatient ( final Patient user ) {
         this.patient = user;
     }
 
