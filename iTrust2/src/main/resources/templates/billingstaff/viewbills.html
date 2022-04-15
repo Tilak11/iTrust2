@@ -132,7 +132,7 @@
 												'MM/dd/yyyy'}}</td>
 											<td name="hcpCell">{{b.attendingHCP.username}}</td>
 											<td name="statusCell">{{b.billStatus}}</td>
-											<td name="statusCell">{{b.total}}</td>
+											<td name="statusCell">${{b.total}}</td>
 											<td name="codesCell" ng-repeat="c in b.cptcodes"
 											codeId={{c.id}}>
 											{{c.code}}

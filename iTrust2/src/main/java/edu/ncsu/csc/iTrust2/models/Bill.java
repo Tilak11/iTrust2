@@ -32,7 +32,6 @@ public class Bill extends DomainObject {
 
     /** ID of this Bill */
     @Id
-    @GeneratedValue ( strategy = GenerationType.AUTO )
     private Long          id;
 
     /** Amount of bill */
@@ -159,10 +158,10 @@ public class Bill extends DomainObject {
      * @param paymentMethod
      */
     public void setPaymentMethod ( final String paymentMethod ) {
-        if ( paymentMethod.equals( "cash" ) || paymentMethod.equals( "check" ) || paymentMethod.equals( "credit card" )
-                || paymentMethod.equals( "insurance" ) ) {
+       // if ( paymentMethod.equals( "cash" ) || paymentMethod.equals( "check" ) || paymentMethod.equals( "credit card" )
+       //         || paymentMethod.equals( "insurance" ) ) {
             this.paymentMethod = paymentMethod;
-        }
+        //}
     }
 
     /**

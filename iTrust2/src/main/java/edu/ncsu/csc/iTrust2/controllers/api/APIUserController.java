@@ -20,11 +20,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import edu.ncsu.csc.iTrust2.forms.UserForm;
+import edu.ncsu.csc.iTrust2.models.CPTCode;
 import edu.ncsu.csc.iTrust2.models.Patient;
 import edu.ncsu.csc.iTrust2.models.Personnel;
 import edu.ncsu.csc.iTrust2.models.User;
 import edu.ncsu.csc.iTrust2.models.enums.Role;
 import edu.ncsu.csc.iTrust2.models.enums.TransactionType;
+import edu.ncsu.csc.iTrust2.services.CPTCodeService;
 import edu.ncsu.csc.iTrust2.services.UserService;
 import edu.ncsu.csc.iTrust2.utils.LoggerUtil;
 
@@ -81,6 +83,8 @@ public class APIUserController extends APIController {
     /** User service */
     @Autowired
     private UserService               userService;
+    @Autowired
+    private CPTCodeService               cpt;
 
     /**
      * Retrieves and returns a list of all Users in the system, regardless of
@@ -269,7 +273,70 @@ public class APIUserController extends APIController {
         userService.save( patient );
 
         userService.save( vaccinator );
+        
+        CPTCode c1 = new CPTCode();
+        CPTCode c2 = new CPTCode();
+        CPTCode c3 = new CPTCode();
+        CPTCode c4 = new CPTCode();
+        CPTCode c5 = new CPTCode();
+        CPTCode c6 = new CPTCode();
+        CPTCode c7 = new CPTCode();
+        CPTCode c8 = new CPTCode();
 
+        c1.setCode("99202");
+        c2.setCode("99203");
+        c3.setCode("99204");
+        c4.setCode("99205");
+        c5.setCode("99212");
+        c6.setCode("99213");
+        c7.setCode("99214");
+        c8.setCode("99215");
+        
+        c1.setDescription("Default");
+        c2.setDescription("Default");
+        c3.setDescription("Default");
+        c4.setDescription("Default");
+        c5.setDescription("Default");
+        c6.setDescription("Default");
+        c7.setDescription("Default");
+        c8.setDescription("Default");
+        
+        c1.setTimeFrame("15-29 minutes");
+        c2.setTimeFrame("30-44 minutes");
+        c3.setTimeFrame("45-59 minutes");
+        c4.setTimeFrame("60-74 minutes");
+        c5.setTimeFrame("10-19 minutes");
+        c6.setTimeFrame("20-29 minutes");
+        c7.setTimeFrame("30-39 minutes");
+        c8.setTimeFrame("40-54 minutes");
+        
+        c1.setCost(75.0);
+        c2.setCost(150.0);
+        c3.setCost(200.0);
+        c4.setCost(250.0);
+        c5.setCost(50.0);
+        c6.setCost(100.0);
+        c7.setCost(125.0);
+        c8.setCost(175.0);
+        
+        c1.setStatus("active");
+        c2.setStatus("active");
+        c3.setStatus("active");
+        c4.setStatus("active");
+        c5.setStatus("active");
+        c6.setStatus("active");
+        c7.setStatus("active");
+        c8.setStatus("active");
+      
+        
+        cpt.save(c1);
+        cpt.save(c2);
+        cpt.save(c3);
+        cpt.save(c4);
+        cpt.save(c5);
+        cpt.save(c6);
+        cpt.save(c7);
+        cpt.save(c8);
         loggerUtil.log( TransactionType.USERS_GENERATED, "" );
 
         return new ResponseEntity( HttpStatus.OK );

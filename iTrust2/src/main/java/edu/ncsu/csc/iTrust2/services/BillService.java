@@ -76,15 +76,15 @@ public class BillService extends Service<Bill, Long> {
      *            Form to build from
      * @return Constructed Bill
      */
-    public Bill build ( final OfficeVisitForm ovf ) {
+    public Bill build ( final Long id, final OfficeVisitForm ovf ) {
         final Bill b = new Bill();
         System.out.println( "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" );
         b.setPatient( (Patient) userService.findByName( ovf.getPatient() ) );
         b.setAttendingHCP( userService.findByName( ovf.getHcp() ) );
 
-        if ( ovf.getId() != null ) {
-            b.setId( Long.parseLong( ovf.getId() ) );
-        }
+       // if ( ovf.getId() != null ) {
+            b.setId( id );
+        //}
 
         final ZonedDateTime visitDate = ZonedDateTime.parse( ovf.getDate() );
         b.setDate( visitDate );

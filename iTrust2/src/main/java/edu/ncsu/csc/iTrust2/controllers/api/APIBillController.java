@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import edu.ncsu.csc.iTrust2.forms.OfficeVisitForm;
@@ -92,10 +93,10 @@ public class APIBillController extends APIController {
      */
     @PostMapping ( BASE_PATH + "/bills" )
     @PreAuthorize ( "hasAnyRole('ROLE_HCP') or hasAnyRole('ROLE_BILLING_STAFF')" )
-    public ResponseEntity createBill ( @RequestBody final OfficeVisitForm ovf ) {
+    public ResponseEntity createBill ( @RequestParam  final Long id, @RequestBody final OfficeVisitForm ovf ) {
         try {
             ovf.setHcp( LoggerUtil.currentUser() );
-            final Bill bill = billService.build( ovf );
+            final Bill bill = billService.build(id, ovf );
             if ( null != bill.getId() && billService.existsById( bill.getId() ) ) {
                 return new ResponseEntity(
                         errorResponse( "Office visit with the id " + bill.getId() + " already exists" ),
@@ -126,7 +127,7 @@ public class APIBillController extends APIController {
     @PreAuthorize ( "hasAnyRole('ROLE_HCP') or hasAnyRole('ROLE_BILLING_STAFF')" )
     public ResponseEntity updateBill ( @PathVariable final Long id, @RequestBody final OfficeVisitForm ovf ) {
         try {
-            final Bill bill = billService.build( ovf );
+            final Bill bill = billService.build(id, ovf );
 
             if ( null == bill.getId() || !billService.existsById( bill.getId() ) ) {
                 return new ResponseEntity( errorResponse( "Bill with the id " + bill.getId() + " doesn't exist" ),

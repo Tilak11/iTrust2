@@ -126,7 +126,7 @@
                             $scope.twelveAndUp = true;
                         }
                     }
-
+                    $scope.goId= "";
                     /*Getting a list of patients*/
                     $http.get("/iTrust2/api/v1/patients").then(
                         function (response) {
@@ -430,16 +430,17 @@
                                     url: '/iTrust2/api/v1/officevisits',
                                     data: $scope.visit
                                 }).then(function (response) {
+                                	$scope.goId = response.data.id;
+                                	console.log("gogo " , $scope.goId);
                                     $scope.errorMsg = "";
                                     $scope.message = "Office visit created successfully";
                                 }, function (rejection) {
                                     $scope.message = "";
                                     $scope.errorMsg = "Error occurred creating office visit: " + rejection.data.message;
                                 })
-                                
-                                $http({
+                                setTimeout(() => {  $http({
                                     method: 'POST',
-                                    url: '/iTrust2/api/v1/bills',
+                                    url: '/iTrust2/api/v1/bills?id='+ $scope.goId,
                                     data: $scope.visit
                                 }).then(function (response) {
                                     $scope.errorMsg = "";
@@ -447,7 +448,8 @@
                                 }, function (rejection) {
                                     $scope.message = "";
                                     $scope.errorMsg = "Error occurred creating bill: " + rejection.data.message;
-                                })
+                                }) }, 4000);
+                               
                             }
                         }
                          else {
