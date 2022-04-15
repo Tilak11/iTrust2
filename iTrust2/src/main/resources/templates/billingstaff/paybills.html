@@ -1,12 +1,317 @@
-<!DOCTYPE html>
-<html>
-<head>
-<title>Pay Bill</title>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:include="layout :: head(title=~{::title},links=~{::script})">
+<title>Pay Bills</title>
+<script th:src="@{/js/dateTimeService.js}"
+	src="../../../js/dateTimeService.js"></script>
+
 </head>
-<body>
 
-<h1>This is a Heading</h1>
-<p>This is a paragraph.</p>
+<body th:include="layout :: body" th:with="content=~{::content}">
+	<div th:fragment="content">
 
+
+		<script th:inline="javascript">
+      /* Otherwise Thymeleaf tries to parse Javascript as XML and breaks itself sometimes.  Sigh */
+      /*<![CDATA[*/
+      var app = angular.module("payBillsApp", ['dateTimeServices', 'jkAngularRatingStars']);
+
+
+      app.controller('payBillsCtrl', function ($scope, $http, dateTimeService) {
+        $scope.visits = [];
+
+        $scope.loadTable = function () {
+        
+          $http.get("/iTrust2/api/v1/patients").then(
+                  function (response) {
+                    $scope.patients = response.data;
+                    $scope.errorMsg = "";
+                  }, function (rejection) {
+                    $scope.visits = [];
+                    $scope.errorMsg = "Could not display patients.";
+                  });
+        }
+        $http.get("/iTrust2/api/v1/officevisits").then(
+                function (response) {
+                  $scope.visits = response.data;
+                  $scope.errorMsg = "";
+                }, function (rejection) {
+                  $scope.visits = [];
+                  $scope.errorMsg = "Could not display office visits.";
+                });
+        $scope.loadTable();
+
+        $scope.selectPatient = function (p) {
+        	   $http.get("/iTrust2/api/v1/officevisits").then(
+                       function (response) {
+                         $scope.visits = response.data;
+                         $scope.errorMsg = "";
+                       }, function (rejection) {
+                         $scope.visits = [];
+                         $scope.errorMsg = "Could not display office visits.";
+                       });
+        	console.log(p);
+        	$scope.pat = p;
+         	$scope.temp = $scope.visits;
+           console.log("bef", $scope.visits);
+            for(var i= $scope.temp.length-1 ; i>=0; i--){
+            	if($scope.temp[i].patient.firstName !== p.firstName){
+            		 $scope.temp.splice(i, 1);
+            	}
+            }
+        
+        	
+            // Stop displaying previous panels
+            $scope.display = false;
+            $scope.displaySurvey = false;
+        	
+            $scope.visit = true;
+
+		
+		}
+       $scope.selectVisit = function (v) {
+        	
+        	$scope.newVisit = v;
+
+		}
+       $scope.payFull = function (date, paymentType) {
+       	
+    	   $scope.required = false;
+    	   if(!paymentType){
+    		   $scope.required = true;
+    		   return;
+    	   }
+
+       	$scope.newVisit.total = 0;
+       	$scope.newVisit.billStatus = "Paid";
+       	$scope.newVisit.paymentType = paymentType;
+      /* 	$scope.newVisit.patient = $scope.pat.username;
+       	$scope.newVisit.hcp = $scope.newVisit.hcp.username;
+       	$scope.newVisit.hospital = $scope.newVisit.hospital.name;
+       	$scope.diagnoses =[];
+       	for(var i =0; i <$scope.newVisit.diagnoses.length ; i++){
+       		$scope.diagnoses.push({
+       			visit: $scope.newVisit.id,
+       			note: $scope.newVisit.diagnoses[i].note,
+       			id: $scope.newVisit.diagnoses[i].id,
+       			code: $scope.newVisit.diagnoses[i].code.code
+       		   
+       		});
+       	}
+       	$scope.newVisit.diagnoses = $scope.diagnoses;
+       	for(var i =0; i <$scope.newVisit.prescriptions.length ; i++){
+       		$scope.newVisit.prescriptions[i].patient = $scope.newVisit.prescriptions[i].patient.username;
+       		$scope.newVisit.prescriptions[i].drug = $scope.newVisit.prescriptions[i].drug.name;
+       	
+       	}*/
+       	
+       	$http.put('/iTrust2/api/v1/officevisits/' + $scope.newVisit.id, $scope.newVisit).then(
+				function(response) {
+					$scope.loadTable();
+					$scope.message = "";
+				}, function(rejection) {
+					$scope.message = "Could not delete";
+				})
+
+		};
+       $scope.payPartially = function (date, partial, paymentType) {
+    	   $scope.more = false;
+    	   $scope.required = false;
+    	   if(!paymentType){
+    		   $scope.required = true;
+    		   return;
+    	   }
+       	if( partial > $scope.newVisit.total){
+       		$scope.more = true;
+       		return;
+       	}
+
+
+       	$scope.newVisit.total = $scope.newVisit.total - partial;
+       	$scope.newVisit.billStatus = "Partially Paid";
+       	$scope.newVisit.paymentType = paymentType;
+       	$scope.newVisit.patient = $scope.pat.username;
+       	$scope.newVisit.hcp = $scope.newVisit.hcp.username;
+     	$scope.newVisit.hospital = $scope.newVisit.hospital.name;
+    	console.log("visi: ", $scope.newVisit);
+     /*	$scope.diagnoses =[];
+       	for(var i =0; i <$scope.newVisit.diagnoses.length ; i++){
+       		$scope.diagnoses.push({
+       			visit: $scope.newVisit.id,
+       			note: $scope.newVisit.diagnoses[i].note,
+       			id: $scope.newVisit.diagnoses[i].id,
+       			code: $scope.newVisit.diagnoses[i].code.code
+       		   
+       		});
+       	}
+       	$scope.newVisit.diagnoses = $scope.diagnoses;
+       	for(var i =0; i <$scope.newVisit.prescriptions.length ; i++){
+       		$scope.newVisit.prescriptions[i].patient = $scope.newVisit.prescriptions[i].patient.username;
+       	}*/
+       	
+       	$http.put('/iTrust2/api/v1/officevisits/' + $scope.newVisit.id, $scope.newVisit).then(
+				function(response) {
+					$scope.loadTable();
+					$scope.message = "";
+				}, function(rejection) {
+					$scope.message = "Could not delete";
+				})
+
+
+		}
+
+        // View the visit that was selected in the table
+		  $scope.viewSelectedVisit = function() {
+			  // Get the selected visit from the api.
+			  // The id of the selected visit is $scope.selectedOfficeVisit
+			  // Once you get the details of the visit, store it in $scope.visit
+			  $scope.display = true;
+			  $scope.displaySurvey = false;
+		  }
+
+
+		
+
+	  });
+			/*]]>*/
+    </script>
+
+		<div ng-app="viewOfficeVisitsApp" ng-controller="viewOfficeVisitsCtrl">
+			<div class="container">
+				<div class="row">
+					<div class="col-md-12">
+						<div class="panel panel-primary">
+							<div class="panel-heading">
+								<h3>View and Pay Bill</h3>
+							</div>
+							<div class="panel-body">
+								<table class="table table-bordered">
+									<caption>Patients:</caption>
+
+									<thead>
+										<tr>
+											<th></th>
+											<th>First</th>
+											<th>Last</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr name="officeVisitsTableRow" ng-repeat="p in patients "
+											visitId={{v.id}}>
+											<td name="selectCell"><input type="radio"
+												name="selectRow" ng-model="$parent.selectedPatient"
+												ng-value="v.id" ng-click="selectPatient(p)"></td>
+											<td name="dateCell">{{p.firstName}}</td>
+											<td name="providerCell">{{p.lastName}}</td>
+
+										</tr>
+									</tbody>
+								</table>
+
+								<!-- Error Messages -->
+								<div class="row">
+
+									<div class="col-md-12 text-right">
+										<div style="white-space: pre-line;">
+											<div name="errorMsg" class="text-danger">{{errorMsg}}</div>
+										</div>
+									</div>
+								</div>
+
+							</div>
+
+							<div class="panel-footer text-right">
+								<!-- button may have to be inside form tag, or just a submit function for the form? -->
+
+								<button class="btn btn-primary btn-lg"
+									ng-click="viewSelectedVisit()" name="viewVisit"
+									ng-disabled="!visit">View Details</button>
+							</div>
+
+						</div>
+
+
+						<!-- Display the information about the selected visit -->
+						<div class='panel panel-default'
+							ng-if="visit && (display || displaySurvey)">
+
+							<!-- Show correct heading based on what button was pressed -->
+							<div class="panel-heading" ng-show="display">
+								<h3>Selected Visit Details</h3>
+							</div>
+
+							<div class="panel-heading" ng-show="displaySurvey">
+								<h3>Satisfaction Survey</h3>
+							</div>
+
+							<div class='panel-body'>
+
+								<div ng-if="display" class="row">
+
+									<div class="panel panel-info">
+										<div class="panel-heading">
+											<h4>Office Visits</h4>
+										</div>
+										<div class="panel-body">
+											<div class="form-group row" ng-repeat="v in temp">
+												<div class="col-xs-12 radio-box">
+													<div class="form-check">
+														<input type="radio" name="visitradio"
+															ng-click="selectVisit(v)">
+														<ul>
+															<span>
+																HCP name: {{v.hcp.username}}
+																</span> <br> 
+															<span> 
+																Hospital name: {{v.hospital.name}} </span> <br>
+																<span>
+																 Visit date: {{v.date | date :
+																"MM.dd.yy"}} </span> <br>
+																<span>
+															   Total cost of visit: ${{v.total}} </span> <br>
+																<span>
+															    Bill
+																status: {{v.billStatus}}</span>
+														</ul>
+
+													</div>
+												</div>
+											</div>
+											<div class='input-form'>
+
+												Enter payment type (cash, credit card, insurance etc) <input
+													type="text" ng-model="paymentType"> <br>
+												Enter amount if paying partially <input type="number"
+													ng-model="partial"> <br>
+												Enter Date of Payment (Should be in MM/DD/YYYY ) <input
+													type="text" ng-model="date"> <br>
+
+												<button class="btn btn-primary btn-lg" ng-click="payFull(date, paymentType)"
+													name="viewVisit">Pay Full</button>
+
+												<button class="btn btn-primary btn-lg"
+													ng-click="payPartially(date, partial, paymentType)" name="viewVisit">Pay
+													Partially</button>
+												<br>
+												<span ng-show="more"> Payment amount cannot be more than total </span>
+												<span ng-show="required"> Payment type is required </span>
+											</div>
+
+
+										</div>
+									</div>
+								</div>
+
+
+
+							</div>
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 </body>
+
 </html>
